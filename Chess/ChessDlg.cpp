@@ -7,6 +7,7 @@
 #include "Chess.h"
 #include "ChessDlg.h"
 #include "afxdialogex.h"
+#include "Game.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,11 +47,10 @@ BOOL CChessDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	ShowWindow(SW_MAXIMIZE);
-
-	ShowWindow(SW_MINIMIZE);
+	ShowWindow(SW_SHOWNORMAL);
 
 	// TODO: Add extra initialization here
+	m_game = Game();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -86,22 +86,12 @@ void CChessDlg::OnPaint()
 	}
 	else
 	{
-		HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
-		RECT clientRect;
-		GetClientRect(&clientRect);
+		RECT client_rect;
+		GetClientRect(&client_rect);
 
 		CPaintDC dc(this);
 
-		SetMapMode(dc, MM_ANISOTROPIC);
-		SetViewportExtEx(dc, clientRect.right, clientRect.bottom, 0);
-		SetWindowExtEx(dc, 8, 8, 0);
-
-		for (int i = 0; i < 8; ++i) {
-			for (int j = (i % 2); j < 8; j += 2) {
-				RECT r = { i, j, i + 1, j + 1 };
-				FillRect(dc, &r, brush);
-			}
-		}
+		m_game.Draw(dc, client_rect);
 	}
 }
 

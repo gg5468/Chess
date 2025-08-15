@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "Chess.h"
 #include "ChessDlg.h"
+#include "Game.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

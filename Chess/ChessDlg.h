@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "Game.h"
 
 // CChessDlg dialog
 class CChessDlg : public CDialogEx
@@ -24,6 +24,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
+	Game m_game;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

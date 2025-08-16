@@ -4,14 +4,14 @@
 
 Game::Game()
 {
-	chessboard = Chessboard();
+	chessboard = new Chessboard();
 }
 Game::~Game()
 {
-	// Destructor implementation
+	chessboard = nullptr;
 }
 
 void Game::Draw(HDC dc, RECT client_rect)
 {
-	chessboard.DrawBoard(dc, client_rect);
+	chessboard -> DrawBoard(dc, client_rect);
 }

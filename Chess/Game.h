@@ -9,6 +9,6 @@ public:
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
 private:
-	Chessboard chessboard;
+	Chessboard* chessboard;
 };
 

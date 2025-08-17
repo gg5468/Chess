@@ -18,6 +18,7 @@ enum class Piece {
     BlackKing,
 };
 
+
 inline LPCWSTR GetPieceSymbol(Piece piece) {
     switch (piece) {
 	case Piece::None:        return L"";

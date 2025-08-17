@@ -5,13 +5,13 @@
 Square::Square(Piece* p)
 {
 	state = SquareState::Uninitialized;
-    piece = *p;
+    piece = SetPiece(*p);
 }
 
 void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)
 {
 	FillRect(dc, &r, brush);
-    setRect(r);
+    SetRect(r);
 	DrawTextW(dc, GetPieceSymbol(piece), -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	if (selected) {

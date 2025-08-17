@@ -8,7 +8,7 @@
 
 Chessboard::Chessboard()
 {
-	setPieces();
+	SetPieces();
 }
 
 Chessboard::~Chessboard()
@@ -53,13 +53,13 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	for (int i = 0; i < dimensions; ++i) {
 		for (int j = 0; j < dimensions; ++j) {
 			RECT r = { width * j, height * i, (width * j) + width, (height * i) + height };
-			Square* sq = &Squares[i][j];
+			Square* sq = &squares[i][j];
 			if (sq -> state == SquareState::Uninitialized) {
 				sq -> state = SquareState::Initialized;
-				sq -> piece = Pieces[i][j];
+				sq -> SetPiece(pieces[i][j]);
 			}
 
-			Square square = Squares[i][j];
+			Square square = squares[i][j];
 
 			if ((j + i) % 2 == 0) {
 				sq -> DrawSquare(dc, r, white_brush, white_pen);
@@ -81,7 +81,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 }
 
 
-void Chessboard::setPieces()
+void Chessboard::SetPieces()
 {
 	auto p = fen::GetPieces(fen_notation);
 
@@ -93,7 +93,7 @@ void Chessboard::setPieces()
 
 	while (c < p.length()) {
 		if (skip > 0) {
-			Pieces[i][j] = Piece::None;
+			pieces[i][j] = Piece::None;
 			skip--;
 			j++;
 
@@ -113,18 +113,18 @@ void Chessboard::setPieces()
 		}
 
 		switch (p[c]) {
-		case 'r': Pieces[i][j] = Piece::BlackRook; break;
-		case 'n': Pieces[i][j] = Piece::BlackKnight; break;
-		case 'b': Pieces[i][j] = Piece::BlackBishop; break;
-		case 'q': Pieces[i][j] = Piece::BlackQueen; break;
-		case 'k': Pieces[i][j] = Piece::BlackKing; break;
-		case 'p': Pieces[i][j] = Piece::BlackPawn; break;
-		case 'R': Pieces[i][j] = Piece::WhiteRook; break;
-		case 'N': Pieces[i][j] = Piece::WhiteKnight;; break;
-		case 'B': Pieces[i][j] = Piece::WhiteBishop; break;
-		case 'Q': Pieces[i][j] = Piece::WhiteQueen; break;
-		case 'K': Pieces[i][j] = Piece::WhiteKing; break;
-		case 'P': Pieces[i][j] = Piece::WhitePawn; break;
+		case 'r': pieces[i][j] = Piece::BlackRook; break;
+		case 'n': pieces[i][j] = Piece::BlackKnight; break;
+		case 'b': pieces[i][j] = Piece::BlackBishop; break;
+		case 'q': pieces[i][j] = Piece::BlackQueen; break;
+		case 'k': pieces[i][j] = Piece::BlackKing; break;
+		case 'p': pieces[i][j] = Piece::BlackPawn; break;
+		case 'R': pieces[i][j] = Piece::WhiteRook; break;
+		case 'N': pieces[i][j] = Piece::WhiteKnight;; break;
+		case 'B': pieces[i][j] = Piece::WhiteBishop; break;
+		case 'Q': pieces[i][j] = Piece::WhiteQueen; break;
+		case 'K': pieces[i][j] = Piece::WhiteKing; break;
+		case 'P': pieces[i][j] = Piece::WhitePawn; break;
 		}
 		
 		c++;
@@ -137,9 +137,9 @@ void Chessboard::setPieces()
 bool Chessboard::OnLButtonDown(CPoint point) {\
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
-			Square* sq = &Squares[row][col];
+			Square* sq = &squares[row][col];
 
-			if (PtInRect(&sq -> rect, point)) {
+			if (PtInRect(&sq -> GetRect(), point)) {
 				sq -> SetSelected(true);
 				return true;
 			}

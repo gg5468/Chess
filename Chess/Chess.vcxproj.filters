@@ -45,7 +45,7 @@
     <ClInclude Include="Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FEN.h">
+    <ClInclude Include="fen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

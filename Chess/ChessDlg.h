@@ -24,12 +24,15 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	Game m_game;
+	Game game;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg
+	BOOL OnEraseBkgnd(CDC* pDC);
+	void OnSize(UINT nType, int cx, int cy);
+	void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP();
 };

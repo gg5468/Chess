@@ -3,7 +3,7 @@
 #include "Square.h"
 #include "Piece.h"
 #include <iostream>
-#include "FEN.h"
+#include "fen.h"
 #include<string>
 
 Chessboard::Chessboard()
@@ -34,8 +34,8 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	HBRUSH white_brush = CreateSolidBrush(white);
 	HBRUSH black_brush = CreateSolidBrush(black);
 
-	HPEN white_pen = CreatePen(PS_SOLID, 0.8, white);
-	HPEN black_pen = CreatePen(PS_SOLID, 0.8, black);
+	HPEN white_pen = CreatePen(PS_SOLID, 3, RGB(123,526,233));
+	HPEN black_pen = CreatePen(PS_SOLID, 3, black);
 
 
 	int fontPointSize = (height + width) / 6;
@@ -53,17 +53,20 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	for (int i = 0; i < dimensions; ++i) {
 		for (int j = 0; j < dimensions; ++j) {
 			RECT r = { width * j, height * i, (width * j) + width, (height * i) + height };
+			Square* sq = &Squares[i][j];
+			if (sq -> state == SquareState::Uninitialized) {
+				sq -> state = SquareState::Initialized;
+				sq -> piece = Pieces[i][j];
+			}
+
+			Square square = Squares[i][j];
 
 			if ((j + i) % 2 == 0) {
-				Squares[i][j] = new Square(r, &Pieces[i][j]);
-
-				Squares[i][j]->DrawSquare(dc, client_rect, white_brush, white_pen);
+				sq -> DrawSquare(dc, r, white_brush, white_pen);
 			}
 			else {
-				;
-				Squares[i][j] = new Square(r, &Pieces[i][j]);
 
-				Squares[i][j]->DrawSquare(dc, client_rect, black_brush, black_pen);
+				sq -> DrawSquare(dc, r, black_brush, black_pen);
 			}
 		}
 	}
@@ -80,7 +83,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 
 void Chessboard::setPieces()
 {
-	auto p = FEN::GetPieces(fen_notation);
+	auto p = fen::GetPieces(fen_notation);
 
 	int skip = 0;
 	int i = 0;
@@ -129,4 +132,21 @@ void Chessboard::setPieces()
 
 	}
 
+}
+
+bool Chessboard::OnLButtonDown(CPoint point) {\
+	for (int row = 0; row < 8; ++row) {
+		for (int col = 0; col < 8; ++col) {
+			Square* sq = &Squares[row][col];
+
+			if (PtInRect(&sq -> rect, point)) {
+				sq -> SetSelected(true);
+				return true;
+			}
+
+		}
+	}
+
+
+	return false;
 }

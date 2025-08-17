@@ -2,14 +2,14 @@
 #include <regex>
 #include <string>
 
-class FEN {
+class fen {
 public:
     static std::wstring to_wstring(const std::string& str) {
         return std::wstring(str.begin(), str.end());
     }
 
 
-    static std::wstring FEN::GetPieces(std::string fen) {
+    static std::wstring fen::GetPieces(std::string fen) {
         std::regex pattern(R"(([\w\d/]+)\s([wb])\s([KQkq\-]+)\s([\w\d\-]+)\s(\d+)\s(\d+))");
 
         std::smatch matches;

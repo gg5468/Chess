@@ -15,3 +15,8 @@ void Game::Draw(HDC dc, RECT client_rect)
 {
 	chessboard -> DrawBoard(dc, client_rect);
 }
+
+bool Game::OnLButtonDown(CPoint point)
+{
+	return chessboard	->	OnLButtonDown(point);
+}

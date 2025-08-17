@@ -15,7 +15,7 @@ enum class Piece {
     BlackBishop,
     BlackRook,
     BlackQueen,
-    BlackKing
+    BlackKing,
 };
 
 inline LPCWSTR GetPieceSymbol(Piece piece) {

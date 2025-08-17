@@ -12,9 +12,9 @@ public:
 	void DrawBoard(HDC dc, RECT client_rect);
 
 	void setPieces();
-
+	bool OnLButtonDown(CPoint point);
 private:
-	Square* Squares[8][8];
+	Square Squares[8][8];
 	Piece Pieces[8][8];
 
 	std::string fen_notation = "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 4";

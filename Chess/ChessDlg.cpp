@@ -33,6 +33,8 @@ BEGIN_MESSAGE_MAP(CChessDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_SIZE()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -50,7 +52,7 @@ BOOL CChessDlg::OnInitDialog()
 	ShowWindow(SW_SHOWNORMAL);
 
 	// TODO: Add extra initialization here
-	m_game = Game();
+	game = Game();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -59,8 +61,19 @@ BOOL CChessDlg::OnInitDialog()
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
+BOOL CChessDlg::OnEraseBkgnd(CDC* pDC)
+{
+	return true;
+}
+
 void CChessDlg::OnSize(UINT nType, int cx, int cy)
 {
+	Invalidate();
+}
+
+void CChessDlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	game.OnLButtonDown(point);
 	Invalidate();
 }
 
@@ -91,7 +104,7 @@ void CChessDlg::OnPaint()
 
 		CPaintDC dc(this);
 
-		m_game.Draw(dc, client_rect);
+		game.Draw(dc, client_rect);
 	}
 }
 

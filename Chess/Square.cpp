@@ -2,33 +2,40 @@
 #include "Square.h"
 #include "Piece.h"
 
-Square::Square(RECT r, Piece* p)
+Square::Square(Piece* p)
 {
-    rect = r;
+	state = SquareState::Uninitialized;
     piece = *p;
 }
 
-void Square::DrawSquare(HDC dc,RECT client_rect, HBRUSH brush, HPEN hPen)
+void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)
 {
+	FillRect(dc, &r, brush);
+    setRect(r);
+	DrawTextW(dc, GetPieceSymbol(piece), -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-	FillRect(dc, &rect, brush);
-	
+	if (selected) {
+		drawSelected(dc, r ,hPen);
+	}
+}
 
-	DrawTextW(dc, GetPieceSymbol(piece), -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
+void Square::drawSelected(HDC dc, RECT r, HPEN hPen) {
     HPEN    hOldPen = (HPEN)SelectObject(dc, hPen);
 
-    MoveToEx(dc, rect.left, rect.top, nullptr);
-    LineTo(dc, rect.right, rect.top);
+    MoveToEx(dc, r.left, r.top, nullptr);
+    LineTo(dc, r.right - 1, r.top);
 
-    MoveToEx(dc, rect.right, rect.top, nullptr);
-    LineTo(dc, rect.right, rect.bottom);
 
-    MoveToEx(dc, rect.right, rect.bottom, nullptr);
-    LineTo(dc, rect.left, rect.bottom);
+    MoveToEx(dc, r.right - 1, r.top, nullptr);
+    LineTo(dc, r.right - 1, r.bottom - 1);
 
-    MoveToEx(dc, rect.left, rect.bottom, nullptr);
-    LineTo(dc, rect.left, rect.top);
+
+    MoveToEx(dc, r.right - 1, r.bottom - 1, nullptr);
+    LineTo(dc, r.left, r.bottom - 1);
+
+
+    MoveToEx(dc, r.left, r.bottom - 1, nullptr);
+    LineTo(dc, r.left, r.top);
 
     SelectObject(dc, hOldPen);
 }

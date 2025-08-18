@@ -18,7 +18,7 @@ public:
             return to_wstring(matches[1].str());
         }
         else {
-            return to_wstring("");
+			throw std::invalid_argument("Invalid FEN string");
         }
 
     }

@@ -13,10 +13,57 @@ Game::~Game()
 
 void Game::Draw(HDC dc, RECT client_rect)
 {
-	chessboard -> DrawBoard(dc, client_rect);
+	const int labelMargin = 40;
+
+    RECT rectBottomLabels = {
+     client_rect.left + labelMargin,
+     client_rect.bottom - labelMargin,
+     client_rect.right,
+     client_rect.bottom
+    };
+
+   
+    RECT rectLeftLabels = {
+        client_rect.left,
+        client_rect.bottom - labelMargin - (client_rect.bottom - client_rect.top - labelMargin),
+        client_rect.left + labelMargin,
+        client_rect.bottom - labelMargin
+    };
+
+    
+    RECT rectBoard = {
+        client_rect.left + labelMargin,
+        client_rect.top + labelMargin,
+        client_rect.right - labelMargin,
+        client_rect.bottom - labelMargin
+    };
+
+    RECT rectTopLabels = {
+        client_rect.left + labelMargin,       
+        client_rect.top,                          
+        client_rect.right,                  
+        client_rect.top + labelMargin        
+    };
+
+    RECT rectRightLabels = {
+        client_rect.right - labelMargin,
+        client_rect.top + labelMargin,    
+        client_rect.right,   
+        client_rect.bottom - labelMargin
+    };
+
+
+	chessboard -> DrawBoard(dc, rectBoard);
 }
 
 bool Game::OnLButtonDown(CPoint point)
 {
-	return chessboard	->	OnLButtonDown(point);
+	selected_square = chessboard->OnLButtonDown(point);
+	if (selected_square) {
+		selected_square->SetSelected(true);
+		selected_square->SetPiece(Piece::WhiteQueen);
+	}
+
+
+	return true;
 }

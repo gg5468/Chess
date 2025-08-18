@@ -26,6 +26,13 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	int height = client_rect.bottom / dimensions;
 	int width = client_rect.right / dimensions;
 
+	int boardWidth = client_rect.right - client_rect.left;
+	int boardHeight = client_rect.bottom - client_rect.top;
+
+	int squareWidth = boardWidth / dimensions;
+	int squareHeight = boardHeight / dimensions;
+
+
 	auto white = RGB(205, 170, 125);
 
 
@@ -34,9 +41,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	HBRUSH white_brush = CreateSolidBrush(white);
 	HBRUSH black_brush = CreateSolidBrush(black);
 
-	HPEN white_pen = CreatePen(PS_SOLID, 3, RGB(123,526,233));
-	HPEN black_pen = CreatePen(PS_SOLID, 3, black);
-
+	HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(123,526,233));
 
 	int fontPointSize = (height + width) / 6;
 	int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
@@ -52,7 +57,13 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 
 	for (int i = 0; i < dimensions; ++i) {
 		for (int j = 0; j < dimensions; ++j) {
-			RECT r = { width * j, height * i, (width * j) + width, (height * i) + height };
+			RECT r = {
+			client_rect.left + j * squareWidth,
+			client_rect.top + i * squareHeight,
+			client_rect.left + (j + 1) * squareWidth,
+			client_rect.top + (i + 1) * squareHeight
+			};
+
 			Square* sq = &squares[i][j];
 			if (sq -> state == SquareState::Uninitialized) {
 				sq -> state = SquareState::Initialized;
@@ -62,11 +73,11 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 			Square square = squares[i][j];
 
 			if ((j + i) % 2 == 0) {
-				sq -> DrawSquare(dc, r, white_brush, white_pen);
+				sq -> DrawSquare(dc, r, white_brush, selected_pen);
 			}
 			else {
 
-				sq -> DrawSquare(dc, r, black_brush, black_pen);
+				sq -> DrawSquare(dc, r, black_brush, selected_pen);
 			}
 		}
 	}
@@ -76,8 +87,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	DeleteObject(white_brush);
 	DeleteObject(black_brush);
 
-	DeleteObject(white_pen);
-	DeleteObject(black_pen);
+	DeleteObject(selected_pen);
 }
 
 
@@ -91,7 +101,7 @@ void Chessboard::SetPieces()
 
 	int c = 0;
 
-	while (c < p.length()) {
+	while (c < p.length() + 1) {
 		if (skip > 0) {
 			pieces[i][j] = Piece::None;
 			skip--;
@@ -134,19 +144,21 @@ void Chessboard::SetPieces()
 
 }
 
-bool Chessboard::OnLButtonDown(CPoint point) {\
+Square* Chessboard::OnLButtonDown(CPoint point) {
+	return FindSquareWithPoint(point);
+}
+
+Square* Chessboard::FindSquareWithPoint(CPoint point) {
 	for (int row = 0; row < 8; ++row) {
 		for (int col = 0; col < 8; ++col) {
 			Square* sq = &squares[row][col];
 
-			if (PtInRect(&sq -> GetRect(), point)) {
-				sq -> SetSelected(true);
-				return true;
+			if (PtInRect(&sq->GetRect(), point)) {
+				return sq;
 			}
 
 		}
 	}
 
-
-	return false;
+	return nullptr;
 }

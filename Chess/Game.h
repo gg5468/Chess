@@ -11,5 +11,6 @@ public:
 	bool OnLButtonDown(CPoint p);
 private:
 	Chessboard* chessboard;
+	Square* selected_square = nullptr;
 };
 

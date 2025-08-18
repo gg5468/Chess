@@ -58,11 +58,25 @@ void Game::Draw(HDC dc, RECT client_rect)
 
 bool Game::OnLButtonDown(CPoint point)
 {
-	selected_square = chessboard->OnLButtonDown(point);
-	if (selected_square) {
-		selected_square->SetSelected(true);
-		selected_square->SetPiece(Piece::WhiteQueen);
+    
+    selected_square = chessboard->OnLButtonDown(point);
+	if (!selected_square) {
+		return false;
 	}
+
+    if (piece_in_hand) {
+        selected_square->SetPiece(piece_in_hand -> GetPiece());
+	    piece_in_hand -> SetPiece(Piece::None);
+	    piece_in_hand = nullptr;
+    }
+	else {
+        if (selected_square->GetPiece() == Piece::None) {
+            return false;
+        }
+        piece_in_hand = selected_square;
+       
+	}
+
 
 
 	return true;

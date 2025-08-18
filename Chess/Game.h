@@ -9,8 +9,15 @@ public:
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
 	bool OnLButtonDown(CPoint p);
+
+
 private:
 	Chessboard* chessboard;
 	Square* selected_square = nullptr;
+
+
+	//todo: refactor
+	Square* piece_in_hand = nullptr;
+
 };
 

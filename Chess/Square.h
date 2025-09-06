@@ -12,7 +12,7 @@ public:
 	SquareState state;
 
 	Square(Piece* p);
-	Square() : piece(Piece::None), state(SquareState::Uninitialized) {}
+	Square() : piece(PieceType::None), state(SquareState::Uninitialized) {}
 	
 	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }

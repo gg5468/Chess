@@ -66,11 +66,11 @@ bool Game::OnLButtonDown(CPoint point)
 
     if (piece_in_hand) {
         selected_square->SetPiece(piece_in_hand -> GetPiece());
-	    piece_in_hand -> SetPiece(Piece::None);
+	    piece_in_hand -> SetPiece(Piece(PieceType::None));
 	    piece_in_hand = nullptr;
     }
 	else {
-        if (selected_square->GetPiece() == Piece::None) {
+        if (selected_square->GetPiece().GetPieceType() == PieceType::None) {
             return false;
         }
         piece_in_hand = selected_square;

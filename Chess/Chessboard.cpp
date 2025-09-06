@@ -2,6 +2,7 @@
 #include "Chessboard.h"
 #include "Square.h"
 #include "Piece.h"
+#include "PieceType.h"
 #include <iostream>
 #include "fen.h"
 #include<string>
@@ -103,7 +104,7 @@ void Chessboard::SetPieces()
 
 	while (c < p.length() + 1) {
 		if (skip > 0) {
-			pieces[i][j] = Piece::None;
+			pieces[i][j] = Piece(PieceType::None);
 			skip--;
 			j++;
 
@@ -123,18 +124,18 @@ void Chessboard::SetPieces()
 		}
 
 		switch (p[c]) {
-		case 'r': pieces[i][j] = Piece::BlackRook; break;
-		case 'n': pieces[i][j] = Piece::BlackKnight; break;
-		case 'b': pieces[i][j] = Piece::BlackBishop; break;
-		case 'q': pieces[i][j] = Piece::BlackQueen; break;
-		case 'k': pieces[i][j] = Piece::BlackKing; break;
-		case 'p': pieces[i][j] = Piece::BlackPawn; break;
-		case 'R': pieces[i][j] = Piece::WhiteRook; break;
-		case 'N': pieces[i][j] = Piece::WhiteKnight;; break;
-		case 'B': pieces[i][j] = Piece::WhiteBishop; break;
-		case 'Q': pieces[i][j] = Piece::WhiteQueen; break;
-		case 'K': pieces[i][j] = Piece::WhiteKing; break;
-		case 'P': pieces[i][j] = Piece::WhitePawn; break;
+			case 'r': pieces[i][j] = Piece(PieceType::BlackRook); break;
+			case 'n': pieces[i][j] = Piece(PieceType::BlackKnight); break;
+			case 'b': pieces[i][j] = Piece(PieceType::BlackBishop); break;
+			case 'q': pieces[i][j] = Piece(PieceType::BlackQueen); break;
+			case 'k': pieces[i][j] = Piece(PieceType::BlackKing); break;
+			case 'p': pieces[i][j] = Piece(PieceType::BlackPawn); break;
+			case 'R': pieces[i][j] = Piece(PieceType::WhiteRook); break;
+			case 'N': pieces[i][j] = Piece(PieceType::WhiteKnight);; break;
+			case 'B': pieces[i][j] = Piece(PieceType::WhiteBishop); break;
+			case 'Q': pieces[i][j] = Piece(PieceType::WhiteQueen); break;
+			case 'K': pieces[i][j] = Piece(PieceType::WhiteKing); break;
+			case 'P': pieces[i][j] = Piece(PieceType::WhitePawn); break;
 		}
 		
 		c++;

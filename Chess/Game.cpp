@@ -4,56 +4,17 @@
 
 Game::Game()
 {
-	chessboard = new Chessboard();
+	chessboard = std::make_unique<Chessboard>();
 }
 Game::~Game()
 {
-	chessboard = nullptr;
 }
 
 void Game::Draw(HDC dc, RECT client_rect)
 {
 	const int labelMargin = 40;
 
-    RECT rectBottomLabels = {
-     client_rect.left + labelMargin,
-     client_rect.bottom - labelMargin,
-     client_rect.right,
-     client_rect.bottom
-    };
-
-   
-    RECT rectLeftLabels = {
-        client_rect.left,
-        client_rect.bottom - labelMargin - (client_rect.bottom - client_rect.top - labelMargin),
-        client_rect.left + labelMargin,
-        client_rect.bottom - labelMargin
-    };
-
-    
-    RECT rectBoard = {
-        client_rect.left + labelMargin,
-        client_rect.top + labelMargin,
-        client_rect.right - labelMargin,
-        client_rect.bottom - labelMargin
-    };
-
-    RECT rectTopLabels = {
-        client_rect.left + labelMargin,       
-        client_rect.top,                          
-        client_rect.right,                  
-        client_rect.top + labelMargin        
-    };
-
-    RECT rectRightLabels = {
-        client_rect.right - labelMargin,
-        client_rect.top + labelMargin,    
-        client_rect.right,   
-        client_rect.bottom - labelMargin
-    };
-
-
-	chessboard -> DrawBoard(dc, rectBoard);
+	chessboard -> DrawBoard(dc, client_rect);
 }
 
 bool Game::OnLButtonDown(CPoint point)
@@ -76,8 +37,6 @@ bool Game::OnLButtonDown(CPoint point)
         piece_in_hand = selected_square;
        
 	}
-
-
 
 	return true;
 }

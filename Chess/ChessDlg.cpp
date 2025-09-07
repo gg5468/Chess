@@ -104,8 +104,6 @@ void CChessDlg::OnPaint()
 
 		CPaintDC dc(this);
 
-
-
 		game.Draw(dc, client_rect);
 	}
 }

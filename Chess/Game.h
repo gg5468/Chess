@@ -1,10 +1,15 @@
 #pragma once
+#include "Player.h"
 
 #include "Chessboard.h"
+#include <memory>
 
 class Game
 {
 public:
+	Game(Game&&) noexcept = default;
+	Game& operator=(Game&&) noexcept = default;
+
 	Game();
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
@@ -12,8 +17,13 @@ public:
 
 
 private:
-	Chessboard* chessboard;
+	std::unique_ptr<Chessboard> chessboard;
 	Square* selected_square = nullptr;
+	
+	Player white = Player("White");
+	Player black = Player("Black");
+	
+	Player* turn = &white;
 
 
 	//todo: refactor

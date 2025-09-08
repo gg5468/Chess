@@ -17,6 +17,12 @@ public:
 	bool Game::IsValidMove(Square& from, Square& to, Square board[8][8]);
 	bool Game::findSquarePosition(Square& target, Square board[8][8], int& outX, int& outY);
 
+	bool IsInCheck(PieceColor kingColor, Square board[8][8]);
+
+	bool IsCheckmate(PieceColor kingColor, Square board[8][8]);
+
+	void CopyBoard(Square src[8][8], Square dest[8][8]);
+
 private:
 	std::unique_ptr<Chessboard> chessboard;
 	Square* selected_square = nullptr;

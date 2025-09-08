@@ -2,8 +2,12 @@
 #include "Player.h"
 #include "string"
 
-Player::Player(std::string color)
+Player::Player(PieceColor c)
 {
-	color = color;
+	color = c;
 }
 
+PieceColor Player::GetColor()
+{
+	return color;
+}

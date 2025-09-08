@@ -2,7 +2,6 @@
 #include "Chessboard.h"
 #include "Square.h"
 #include "Piece.h"
-#include "PieceType.h"
 #include <iostream>
 #include "fen.h"
 #include<string>
@@ -59,10 +58,10 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	for (int i = 0; i < dimensions; ++i) {
 		for (int j = 0; j < dimensions; ++j) {
 			RECT r = {
-			client_rect.left + j * squareWidth,
-			client_rect.top + i * squareHeight,
-			client_rect.left + (j + 1) * squareWidth,
-			client_rect.top + (i + 1) * squareHeight
+				client_rect.left + j * squareWidth,
+				client_rect.top + i * squareHeight,
+				client_rect.left + (j + 1) * squareWidth,
+				client_rect.top + (i + 1) * squareHeight
 			};
 
 			Square* sq = &squares[i][j];

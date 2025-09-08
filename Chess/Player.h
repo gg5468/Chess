@@ -1,9 +1,13 @@
 #pragma once
 #include "string"
+#include "Piece.h"
 
 class Player
 {
 public:
-	Player(std::string color);
+	Player(PieceColor color);
+	PieceColor GetColor();
+private:
+	PieceColor color;
 };
 

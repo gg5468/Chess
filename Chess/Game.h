@@ -1,6 +1,6 @@
 #pragma once
 #include "Player.h"
-
+#include "Piece.h"
 #include "Chessboard.h"
 #include <memory>
 
@@ -14,16 +14,16 @@ public:
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
 	bool OnLButtonDown(CPoint p);
-
+	bool Game::IsValidMove(Square& from, Square& to, Square board[8][8]);
+	bool Game::findSquarePosition(Square& target, Square board[8][8], int& outX, int& outY);
 
 private:
 	std::unique_ptr<Chessboard> chessboard;
 	Square* selected_square = nullptr;
 	
-	Player white = Player("White");
-	Player black = Player("Black");
-	
-	Player* turn = &white;
+	std::unique_ptr<Player> white = std::make_unique<Player>(PieceColor::White);
+	std::unique_ptr<Player> black = std::make_unique<Player>(PieceColor::Black);
+	Player* currentPlayer = white.get();
 
 
 	//todo: refactor

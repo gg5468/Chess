@@ -31,7 +31,8 @@ private:
 	std::unique_ptr<Player> black = std::make_unique<Player>(PieceColor::Black);
 	Player* currentPlayer = white.get();
 
-
+	int lastPawnDoubleStepX; // X of last double-step pawn
+	int lastPawnDoubleStepY; // Y of last double-step pawn
 	//todo: refactor
 	Square* piece_in_hand = nullptr;
 

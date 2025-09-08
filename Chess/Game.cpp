@@ -30,6 +30,8 @@ static inline bool IsKing(PieceType pt) { return pt == PieceType::WhiteKing || p
 
 Game::Game() {
     chessboard = std::make_unique<Chessboard>();
+    lastPawnDoubleStepX = -1;
+    lastPawnDoubleStepY = -1;
 }
 
 Game::~Game() {}
@@ -38,15 +40,15 @@ void Game::Draw(HDC dc, RECT client_rect) {
     chessboard->DrawBoard(dc, client_rect);
 }
 
+// ----------------- Player Input -----------------
+
 bool Game::OnLButtonDown(CPoint point) {
     selected_square = chessboard->OnLButtonDown(point);
     if (!selected_square) return false;
 
     if (piece_in_hand) {
-        // check if move is valid for piece type & path
         if (!IsValidMove(*piece_in_hand, *selected_square, chessboard->squares)) {
-            // illegal move: drop piece_in_hand so player can pick again
-            piece_in_hand = nullptr;
+            piece_in_hand = nullptr; // reset so player can try another move
             return false;
         }
 
@@ -57,7 +59,7 @@ bool Game::OnLButtonDown(CPoint point) {
         int fromX, fromY, toX, toY;
         if (!findSquarePosition(*piece_in_hand, chessboard->squares, fromX, fromY) ||
             !findSquarePosition(*selected_square, chessboard->squares, toX, toY)) {
-            piece_in_hand = nullptr; // fail-safe
+            piece_in_hand = nullptr;
             return false;
         }
 
@@ -68,14 +70,35 @@ bool Game::OnLButtonDown(CPoint point) {
 
         // illegal if king would still be in check
         if (IsInCheck(moverColor, copy)) {
-            piece_in_hand = nullptr; // reset so player can try another piece/move
+            piece_in_hand = nullptr;
             return false;
+        }
+
+        // --- handle en passant capture ---
+        PieceType movedType = piece_in_hand->GetPiece().GetPieceType();
+        int dx = toX - fromX;
+        int dy = toY - fromY;
+        PieceType targetType = selected_square->GetPiece().GetPieceType();
+
+        if (IsPawn(movedType) && targetType == PieceType::None && std::abs(dx) == 1 && dy == ((moverColor == PieceColor::White) ? -1 : 1)) {
+            int captureRow = toY + ((moverColor == PieceColor::White) ? 1 : -1);
+            chessboard->squares[captureRow][toX].SetPiece(Piece(PieceType::None));
         }
 
         // --- commit move ---
         selected_square->SetPiece(piece_in_hand->GetPiece());
         piece_in_hand->SetPiece(Piece(PieceType::None));
         piece_in_hand = nullptr;
+
+        // track en passant possibility
+        if (IsPawn(movedType) && std::abs(dy) == 2) {
+            lastPawnDoubleStepX = toX;
+            lastPawnDoubleStepY = toY;
+        }
+        else {
+            lastPawnDoubleStepX = -1;
+            lastPawnDoubleStepY = -1;
+        }
 
         // switch turn
         currentPlayer = (currentPlayer == white.get()) ? black.get() : white.get();
@@ -94,7 +117,6 @@ bool Game::OnLButtonDown(CPoint point) {
         return true;
     }
     else {
-        // pick up piece if it belongs to current player
         if (selected_square->GetPiece().GetPieceType() == PieceType::None) return false;
         if (GetColorFromType(selected_square->GetPiece().GetPieceType()) == currentPlayer->GetColor()) {
             piece_in_hand = selected_square;
@@ -104,8 +126,6 @@ bool Game::OnLButtonDown(CPoint point) {
 
     return false;
 }
-
-
 
 // ----------------- Movement Rules -----------------
 
@@ -184,6 +204,14 @@ bool Game::IsValidMove(Square& from, Square& to, Square board[8][8]) {
             board[fromY + dir][fromX].GetPiece().GetPieceType() == PieceType::None &&
             targetType == PieceType::None)
             return true;
+
+        // --- en passant ---
+        int enPassantRow = (moverColor == PieceColor::White) ? 3 : 4;
+        if (fromY == enPassantRow && dy == dir && std::abs(dx) == 1 && targetType == PieceType::None) {
+            if (toX == lastPawnDoubleStepX && fromY == lastPawnDoubleStepY) {
+                return true;
+            }
+        }
 
         return false;
     }

@@ -18,5 +18,5 @@ private:
 	
 	Piece pieces[8][8];
 	
-	std::string fen_notation = "rnbqkbnr/pppppppp/8/8/8/8/8/4K3 b - - 0 1";
+	std::string fen_notation = "2kr3r/ppp2ppp/2n2n2/2b1p3/2B1P3/2N2N2/PPP2PPP/R1B2RK1 b - - 4 10";
 };

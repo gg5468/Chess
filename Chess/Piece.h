@@ -32,6 +32,7 @@ public:
 	LPCWSTR GetPieceSymbol();
 	PieceType GetPieceType();
 	PieceColor GetPieceColor();
+	bool hasMoved = false;
 private:
 	PieceType pieceType;
    

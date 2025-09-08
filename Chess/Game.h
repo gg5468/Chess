@@ -13,6 +13,7 @@ public:
 	Game();
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
+	bool CanCastle(Square& kingSquare, Square& rookSquare, Square board[8][8]);
 	bool OnLButtonDown(CPoint p);
 	bool Game::IsValidMove(Square& from, Square& to, Square board[8][8]);
 	bool Game::findSquarePosition(Square& target, Square board[8][8], int& outX, int& outY);

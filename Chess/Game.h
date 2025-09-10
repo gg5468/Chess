@@ -4,12 +4,14 @@
 #include "Chessboard.h"
 #include <memory>
 
+class CChessDlg; // forward declaration
+
 class Game
 {
 public:
 	Game(Game&&) noexcept = default;
 	Game& operator=(Game&&) noexcept = default;
-
+	
 	Game();
 	~Game();
 	void Draw(HDC dc, RECT client_rect);
@@ -23,6 +25,7 @@ public:
 	bool IsCheckmate(PieceColor kingColor, Square board[8][8]);
 
 	void CopyBoard(Square src[8][8], Square dest[8][8]);
+	CChessDlg* parentDlg = nullptr;
 
 private:
 	std::unique_ptr<Chessboard> chessboard;
@@ -34,7 +37,7 @@ private:
 
 	int lastPawnDoubleStepX; // X of last double-step pawn
 	int lastPawnDoubleStepY; // Y of last double-step pawn
-	//todo: refactor
+
 	Square* piece_in_hand = nullptr;
 
 };

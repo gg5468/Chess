@@ -8,10 +8,7 @@
 #include "ChessDlg.h"
 #include "afxdialogex.h"
 #include "Game.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+#include "PromotionDialog.h"
 
 
 // CChessDlg dialog
@@ -35,7 +32,40 @@ BEGIN_MESSAGE_MAP(CChessDlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_ERASEBKGND()
+	ON_MESSAGE(WM_USER_PROMOTE_PAWN, &CChessDlg::OnPromotePawn)
 END_MESSAGE_MAP()
+
+LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
+{
+	int x = static_cast<int>(wParam); // target row of pawn (0 or 7)
+	int y = static_cast<int>(lParam); // target column of pawn
+
+	Square* sq = &game.chessboard.GetSquare(x,y);
+	PieceType oldType = sq->GetPiece().GetPieceType();
+	PieceColor color = (oldType <= PieceType::WhiteKing) ? PieceColor::White : PieceColor::Black;
+
+	// Use smart pointer to safely manage the dialog's lifetime
+	std::unique_ptr<PromotionDialog> dlg = std::make_unique<PromotionDialog>(this);
+
+	if (dlg->DoModal() == IDOK)
+	{
+		PieceType newType;
+		switch (dlg->choice)
+		{
+		case 0: newType = (color == PieceColor::White) ? PieceType::WhiteQueen : PieceType::BlackQueen; break;
+		case 1: newType = (color == PieceColor::White) ? PieceType::WhiteRook : PieceType::BlackRook; break;
+		case 2: newType = (color == PieceColor::White) ? PieceType::WhiteBishop : PieceType::BlackBishop; break;
+		case 3: newType = (color == PieceColor::White) ? PieceType::WhiteKnight : PieceType::BlackKnight; break;
+		default: newType = oldType; break;
+		}
+
+		sq->SetPiece(Piece(newType));
+		Invalidate(); // redraw board
+	}
+
+	return 0;
+}
+
 
 
 // CChessDlg message handlers
@@ -53,6 +83,7 @@ BOOL CChessDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	game = Game();
+	game.parentDlg = this;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

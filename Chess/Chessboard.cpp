@@ -144,6 +144,13 @@ void Chessboard::SetPieces()
 
 }
 
+Square& Chessboard::GetSquare(int row, int col) {
+	if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+		throw std::out_of_range("GetSquare: indices out of range");
+	}
+	return squares[row][col];
+}
+
 Square* Chessboard::OnLButtonDown(CPoint point) {
 	return FindSquareWithPoint(point);
 }

@@ -32,6 +32,7 @@ protected:
 	BOOL OnEraseBkgnd(CDC* pDC);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg LRESULT OnPromotePawn(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP();

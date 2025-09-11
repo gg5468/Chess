@@ -353,10 +353,12 @@ void Game::checkCheck() {
             int result = MessageBox(NULL, L"Checkmate!", L"Game Over", MB_OK);
             if (result == IDOK) {
                 parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
+                return;
             }
         }
         else {
             auto result = MessageBox(NULL, L"Check!", L"Warning", MB_OK);
+            return;
         }
     }
 }

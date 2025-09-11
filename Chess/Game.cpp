@@ -346,8 +346,6 @@ bool Game::isCheckmate(PieceColor kingColor, Square board[8][8]) {
     return true;
 }
 
-// ----------------- Helpers -----------------
-
 void Game::checkCheck() {
     PieceColor opponentColor = currentPlayer->GetColor();
     if (isInCheck(opponentColor, chessboard->GetSquares())) {
@@ -362,6 +360,9 @@ void Game::checkCheck() {
         }
     }
 }
+
+// ----------------- Helpers -----------------
+
 
 void Game::PromotePawn(Square* square, PieceType newType) {
     square->SetPiece(Piece(newType));

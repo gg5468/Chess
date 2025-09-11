@@ -13,7 +13,6 @@ Chessboard::Chessboard()
 
 Chessboard::~Chessboard()
 {
-	// Destructor implementation
 }
 
 void Chessboard::DrawBoard(HDC dc, RECT client_rect)
@@ -41,7 +40,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 	HBRUSH white_brush = CreateSolidBrush(white);
 	HBRUSH black_brush = CreateSolidBrush(black);
 
-	HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(123,526,233));
+	HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(556,896,4));
 
 	int fontPointSize = (height + width) / 6;
 	int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
@@ -65,10 +64,7 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 			};
 
 			Square* sq = &squares[i][j];
-			if (sq -> state == SquareState::Uninitialized) {
-				sq -> state = SquareState::Initialized;
-				sq -> SetPiece(pieces[i][j]);
-			}
+			sq->SetPiece(pieces[i][j]);
 
 			Square square = squares[i][j];
 
@@ -144,12 +140,13 @@ void Chessboard::SetPieces()
 
 }
 
-Square& Chessboard::GetSquare(int row, int col) {
+Square* Chessboard::GetSquare(int row, int col) {
 	if (row < 0 || row >= 8 || col < 0 || col >= 8) {
 		throw std::out_of_range("GetSquare: indices out of range");
 	}
-	return squares[row][col];
+	return &squares[row][col];
 }
+
 
 Square* Chessboard::OnLButtonDown(CPoint point) {
 	return FindSquareWithPoint(point);

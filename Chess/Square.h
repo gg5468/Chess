@@ -8,11 +8,13 @@ enum class SquareState {
 
 class Square
 {
-public:
-	SquareState state;
+public:          
+	void Initialize();
+
+	Square& operator=(const Square& other);
 
 	Square(Piece* p);
-	Square() : piece(PieceType::None), state(SquareState::Uninitialized) {}
+	Square() : piece(PieceType::None) {}
 	
 	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }

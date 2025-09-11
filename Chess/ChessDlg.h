@@ -24,7 +24,9 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	Game game;
+	Game game = Game(this);
+	void DrawGame();
+	afx_msg LRESULT OnRedrawGame(WPARAM wParam, LPARAM lParam);
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

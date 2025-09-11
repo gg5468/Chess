@@ -28,7 +28,7 @@ LPCWSTR Piece::GetPieceSymbol() {
     case PieceType::BlackRook:   return L"\u265C";    // IDS_BLACK_ROOK
     case PieceType::BlackQueen:  return L"\u265B";    // IDS_BLACK_QUEEN
     case PieceType::BlackKing:   return L"\u265A";    // IDS_BLACK_KING
-    default:                      return L"?";         // IDS_PIECE_UNKNOWN
+    default:                     return L"?";         // IDS_PIECE_UNKNOWN
     }
 }
 
@@ -53,3 +53,9 @@ PieceColor Piece::GetPieceColor() {
     }
 }
 
+bool Piece::IsPawn() { return pieceType == PieceType::WhitePawn || pieceType == PieceType::BlackPawn; }
+bool Piece::IsKnight() { return pieceType == PieceType::WhiteKnight || pieceType == PieceType::BlackKnight; }
+bool Piece::IsBishop() { return pieceType == PieceType::WhiteBishop || pieceType == PieceType::BlackBishop; }
+bool Piece::IsRook() { return pieceType == PieceType::WhiteRook || pieceType == PieceType::BlackRook; }
+bool Piece::IsQueen() { return pieceType == PieceType::WhiteQueen || pieceType == PieceType::BlackQueen; }
+bool Piece::IsKing() { return pieceType == PieceType::WhiteKing || pieceType == PieceType::BlackKing; }

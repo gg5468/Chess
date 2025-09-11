@@ -1,7 +1,3 @@
-
-// ChessDlg.cpp : implementation file
-//
-
 #include "pch.h"
 #include "framework.h"
 #include "Chess.h"
@@ -9,10 +5,6 @@
 #include "afxdialogex.h"
 #include "Game.h"
 #include "PromotionDialog.h"
-
-
-// CChessDlg dialog
-
 
 
 CChessDlg::CChessDlg(CWnd* pParent /*=nullptr*/)
@@ -33,18 +25,34 @@ BEGIN_MESSAGE_MAP(CChessDlg, CDialogEx)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_ERASEBKGND()
 	ON_MESSAGE(WM_USER_PROMOTE_PAWN, &CChessDlg::OnPromotePawn)
+	ON_MESSAGE(WM_USER_REDRAW_GAME, &CChessDlg::OnRedrawGame)
 END_MESSAGE_MAP()
+
+void CChessDlg::DrawGame()
+{
+	CRect client_rect;
+	GetClientRect(&client_rect);
+	CPaintDC dc(this);
+
+	game.Draw(dc, client_rect);
+}
+
+LRESULT CChessDlg::OnRedrawGame(WPARAM wParam, LPARAM lParam)
+{
+	game = Game(this);
+	DrawGame();
+	return 0;
+}
 
 LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
 {
-	int x = static_cast<int>(wParam); // target row of pawn (0 or 7)
-	int y = static_cast<int>(lParam); // target column of pawn
+	int x = static_cast<int>(wParam); 
+	int y = static_cast<int>(lParam); 
 
-	Square* sq = &game.chessboard.GetSquare(x,y);
+	Square* sq = game.GetChessboardSquare(x,y);
 	PieceType oldType = sq->GetPiece().GetPieceType();
 	PieceColor color = (oldType <= PieceType::WhiteKing) ? PieceColor::White : PieceColor::Black;
 
-	// Use smart pointer to safely manage the dialog's lifetime
 	std::unique_ptr<PromotionDialog> dlg = std::make_unique<PromotionDialog>(this);
 
 	if (dlg->DoModal() == IDOK)
@@ -60,7 +68,7 @@ LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
 		}
 
 		sq->SetPiece(Piece(newType));
-		Invalidate(); // redraw board
+		Invalidate(); 
 	}
 
 	return 0;
@@ -82,8 +90,7 @@ BOOL CChessDlg::OnInitDialog()
 	ShowWindow(SW_SHOWNORMAL);
 
 	// TODO: Add extra initialization here
-	game = Game();
-	game.parentDlg = this;
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -130,14 +137,11 @@ void CChessDlg::OnPaint()
 	}
 	else
 	{
-		RECT client_rect;
-		GetClientRect(&client_rect);
-
-		CPaintDC dc(this);
-
-		game.Draw(dc, client_rect);
+		DrawGame();
 	}
 }
+
+
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.

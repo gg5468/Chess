@@ -13,6 +13,7 @@
 #define IDC_RADIO_KNIGHT        2004
 
 #define WM_USER_PROMOTE_PAWN (WM_USER + 1)
+#define WM_USER_REDRAW_GAME (WM_USER + 2)
 
 #define IDS_PIECE_NONE        3000
 #define IDS_WHITE_PAWN        3001

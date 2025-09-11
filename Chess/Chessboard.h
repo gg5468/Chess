@@ -15,7 +15,11 @@ public:
 	Square* OnLButtonDown(CPoint point);
 	Square* FindSquareWithPoint(CPoint point);
 
-	Square& GetSquare(int row, int col);
+
+	Square* GetSquare(int row, int col);
+	
+	Square(&GetSquares())[8][8]{return squares;}
+
 private:
 	Square squares[8][8];
 	Piece pieces[8][8];

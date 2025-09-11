@@ -4,8 +4,19 @@
 
 Square::Square(Piece* p)
 {
-	state = SquareState::Uninitialized;
     piece = SetPiece(*p);
+}
+
+Square& Square::operator=(const Square& other)
+{
+    if (this == &other)
+        return *this;
+
+    piece = other.piece;
+    rect = other.rect;
+    selected = other.selected;
+
+    return *this;
 }
 
 void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)

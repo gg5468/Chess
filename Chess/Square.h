@@ -1,7 +1,7 @@
 #pragma once
 #include "Piece.h"
 
-enum class SquareState {
+enum class SquareState{
 	Uninitialized,
 	Initialized
 };
@@ -9,12 +9,10 @@ enum class SquareState {
 class Square
 {
 public:          
-	void Initialize();
-
 	Square& operator=(const Square& other);
 
 	Square(Piece* p);
-	Square() : piece(PieceType::None) {}
+	Square();
 	
 	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }
@@ -25,8 +23,9 @@ public:
 	RECT GetRect() { return rect; }
 	RECT SetRect(RECT& r) { rect = r; return rect; }
 private:
-	Piece piece;
-	RECT rect;
+	Piece piece = PieceType::Uninitialized;
+	RECT rect = { 0,0,0,0 };
+	SquareState state = SquareState::Uninitialized;
 	
 	void drawSelected(HDC dc, RECT r, HPEN hPen);
 	bool selected = false; 

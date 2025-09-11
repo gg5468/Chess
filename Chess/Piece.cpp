@@ -2,7 +2,7 @@
 #include "Piece.h"
 
 Piece::Piece() {
-    pieceType = PieceType::None;
+    pieceType = PieceType::Uninitialized;
 }
 
 Piece::Piece(PieceType pt) {

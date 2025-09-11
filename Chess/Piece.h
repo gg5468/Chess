@@ -4,6 +4,7 @@
 #include "memory.h"
 
 enum class PieceType {
+	Uninitialized,
     None,
     WhitePawn,
     WhiteKnight,
@@ -45,7 +46,7 @@ public:
 
 private:
     bool hasMoved = false;
-	PieceType pieceType;
+    PieceType pieceType = PieceType::Uninitialized;
    
 };
 

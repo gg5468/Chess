@@ -19,6 +19,8 @@ public:
 	bool OnLButtonDown(CPoint p);
 
 	Square* GetChessboardSquare(int row, int col);
+	
+	void PromotePawn(Square* square, PieceType newType);
 
 private:
 	void switchTurn();
@@ -44,8 +46,9 @@ private:
 
 	Square* piece_in_hand = nullptr;
 
-	bool InBounds(int x, int y);
-	bool PathClear(int fromX, int fromY, int toX, int toY, Square board[8][8]);
+	bool inBounds(int x, int y);
+	bool pathClear(int fromX, int fromY, int toX, int toY, Square board[8][8]);
+	void checkCheck();
 
 };
 

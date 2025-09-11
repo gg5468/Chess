@@ -186,19 +186,7 @@ bool Game::OnLButtonDown(CPoint point) {
 
         switchTurn();
 
-        // check status
-        PieceColor opponentColor = currentPlayer->GetColor();
-        if (isInCheck(opponentColor, chessboard->GetSquares())) {
-            if (isCheckmate(opponentColor, chessboard->GetSquares())) {
-                int result = MessageBox(NULL, L"Checkmate!", L"Game Over", MB_OK);
-                if (result == IDOK) {
-                    parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
-                }
-            }
-            else {
-                auto result = MessageBox(NULL, L"Check!", L"Warning", MB_OK);
-            }
-        }
+        checkCheck();
 
         return true;
     }
@@ -217,11 +205,11 @@ bool Game::OnLButtonDown(CPoint point) {
 
 // ----------------- Movement Rules -----------------
 
-bool Game::InBounds(int x, int y) {
+bool Game::inBounds(int x, int y) {
     return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
-bool Game::PathClear(int fromX, int fromY, int toX, int toY, Square board[8][8]) {
+bool Game::pathClear(int fromX, int fromY, int toX, int toY, Square board[8][8]) {
     int dx = toX - fromX;
     int dy = toY - fromY;
     int stepX = (dx == 0) ? 0 : (dx > 0 ? 1 : -1);
@@ -271,9 +259,9 @@ bool Game::isValidMove(Square& from, Square& to, Square board[8][8]) {
         }
         return false;
     }
-    if (movingPiece.IsQueen()) return (dx == 0 || dy == 0 || adx == ady) && PathClear(fromX, fromY, toX, toY, board);
-    if (movingPiece.IsRook()) return (dx == 0 || dy == 0) && PathClear(fromX, fromY, toX, toY, board);
-    if (movingPiece.IsBishop()) return (adx == ady) && PathClear(fromX, fromY, toX, toY, board);
+    if (movingPiece.IsQueen()) return (dx == 0 || dy == 0 || adx == ady) && pathClear(fromX, fromY, toX, toY, board);
+    if (movingPiece.IsRook()) return (dx == 0 || dy == 0) && pathClear(fromX, fromY, toX, toY, board);
+    if (movingPiece.IsBishop()) return (adx == ady) && pathClear(fromX, fromY, toX, toY, board);
     if (movingPiece.IsKnight()) return (adx == 1 && ady == 2) || (adx == 2 && ady == 1);
 
     if (movingPiece.IsPawn()) {
@@ -360,6 +348,26 @@ bool Game::isCheckmate(PieceColor kingColor, Square board[8][8]) {
 
 // ----------------- Helpers -----------------
 
+void Game::checkCheck() {
+    PieceColor opponentColor = currentPlayer->GetColor();
+    if (isInCheck(opponentColor, chessboard->GetSquares())) {
+        if (isCheckmate(opponentColor, chessboard->GetSquares())) {
+            int result = MessageBox(NULL, L"Checkmate!", L"Game Over", MB_OK);
+            if (result == IDOK) {
+                parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
+            }
+        }
+        else {
+            auto result = MessageBox(NULL, L"Check!", L"Warning", MB_OK);
+        }
+    }
+}
+
+void Game::PromotePawn(Square* square, PieceType newType) {
+    square->SetPiece(Piece(newType));
+    PieceColor opponentColor = currentPlayer->GetColor();
+    checkCheck();
+}
 
 void Game::copyBoard(Square src[8][8], Square dest[8][8]) {
     for (int y = 0; y < 8; ++y)

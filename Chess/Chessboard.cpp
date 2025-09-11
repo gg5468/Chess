@@ -64,15 +64,16 @@ void Chessboard::DrawBoard(HDC dc, RECT client_rect)
 			};
 
 			Square* sq = &squares[i][j];
-			sq->SetPiece(pieces[i][j]);
 
-			Square square = squares[i][j];
+			if (sq -> GetPiece().GetPieceType() == PieceType::Uninitialized) {
+				sq->SetPiece(pieces[i][j]);
+			}
+			
 
 			if ((j + i) % 2 == 0) {
 				sq -> DrawSquare(dc, r, white_brush, selected_pen);
 			}
 			else {
-
 				sq -> DrawSquare(dc, r, black_brush, selected_pen);
 			}
 		}

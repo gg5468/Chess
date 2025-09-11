@@ -67,7 +67,8 @@ LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
 		default: newType = oldType; break;
 		}
 
-		sq->SetPiece(Piece(newType));
+		game.PromotePawn(sq, newType);
+		
 		Invalidate(); 
 	}
 

@@ -355,6 +355,7 @@ void Game::checkCheck() {
             int result = MessageBox(parentDlg->GetSafeHwnd(), checkmate, gameOver, MB_OK);
             if (result == IDOK) {
                 parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
+                return;
             }
         }
         else {
@@ -364,6 +365,7 @@ void Game::checkCheck() {
             CString warning;
             warning.LoadString(IDS_WARNING);
             int result = MessageBox(parentDlg->GetSafeHwnd(), check, warning, MB_OK);
+            return;
         }
     }
 }

@@ -346,25 +346,14 @@ void Game::checkCheck() {
     PieceColor opponentColor = currentPlayer->GetColor();
     if (isInCheck(opponentColor, chessboard->GetSquares())) {
         if (isCheckmate(opponentColor, chessboard->GetSquares())) {
-            CString checkmate;
-            checkmate.LoadString(IDS_CHECKMATE);
-
-			CString gameOver;
-			gameOver.LoadString(IDS_GAMEOVER);
-
-            int result = MessageBox(parentDlg->GetSafeHwnd(), checkmate, gameOver, MB_OK);
+            int result = MessageBox(parentDlg->GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECKMATE)), CString(MAKEINTRESOURCE(IDS_GAMEOVER)), MB_OK);
             if (result == IDOK) {
                 parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
                 return;
             }
         }
         else {
-            CString check;
-            check.LoadString(IDS_CHECK);
-
-            CString warning;
-            warning.LoadString(IDS_WARNING);
-            int result = MessageBox(parentDlg->GetSafeHwnd(), check, warning, MB_OK);
+            int result = MessageBox(parentDlg->GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECK)), CString(MAKEINTRESOURCE(IDS_WARNING)), MB_OK);
             return;
         }
     }

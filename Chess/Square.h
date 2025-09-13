@@ -17,7 +17,7 @@ public:
 	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }
 
-	Piece GetPiece() { return piece; }
+	Piece GetPiece() const { return piece; };
 	Piece SetPiece(Piece p) { piece = p; return piece; }
 
 	RECT GetRect() { return rect; }

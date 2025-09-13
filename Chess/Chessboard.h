@@ -1,28 +1,27 @@
 #pragma once
 #include "Square.h"
 #include <string>
-
+#include <vector>
 
 class Chessboard
 {
 public:
-	Chessboard();
-	~Chessboard();
+    Chessboard();
+    ~Chessboard();
 
-	void DrawBoard(HDC dc, RECT client_rect);
-	
-	void SetPieces();
-	Square* OnLButtonDown(CPoint point);
-	Square* FindSquareWithPoint(CPoint point);
+    void DrawBoard(HDC dc, const RECT& client_rect);
 
+    void SetPieces();
+    Square* OnLButtonDown(const CPoint& point);
+    Square* FindSquareWithPoint(const CPoint& point);
 
-	Square* GetSquare(int row, int col);
-	
-	Square(&GetSquares())[8][8]{return squares;}
+    Square* GetSquare(int row, int col);
+
+    const std::vector<std::vector<Square>>& GetSquares() const { return squares; }
 
 private:
-	Square squares[8][8];
-	Piece pieces[8][8];
-	
-	std::string fen_notation = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::vector<std::vector<Square>> squares;
+    std::vector<std::vector<Piece>> pieces;
+
+    std::string fen_notation = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 };

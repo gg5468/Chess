@@ -6,6 +6,7 @@
 #include "resource.h"
 #include <cmath>
 #include <algorithm>
+#include <vector>
 
 // ----------------- Game -----------------
 
@@ -25,7 +26,7 @@ void Game::switchTurn() {
 
 // ----------------- Castling Helper -----------------
 
-bool Game::canCastle(Square& kingSquare, Square& rookSquare, Square board[8][8]) {
+bool Game::canCastle(const Square& kingSquare, const Square& rookSquare, const std::vector<std::vector<Square>>& board) {
     Piece kingPiece = kingSquare.GetPiece();
     Piece rookPiece = rookSquare.GetPiece();
     PieceColor color = kingPiece.GetPieceColor();
@@ -36,8 +37,8 @@ bool Game::canCastle(Square& kingSquare, Square& rookSquare, Square board[8][8])
     if (kingSquare.GetPiece().GetHasMoved() || rookSquare.GetPiece().GetHasMoved()) return false;
 
     int kingX, kingY, rookX, rookY;
-    if (!findSquarePosition(kingSquare, board, kingX, kingY) ||
-        !findSquarePosition(rookSquare, board, rookX, rookY)) return false;
+    if (!findSquarePosition(const_cast<Square&>(kingSquare), board, kingX, kingY) ||
+        !findSquarePosition(const_cast<Square&>(rookSquare), board, rookX, rookY)) return false;
 
     int dir = (rookX > kingX) ? 1 : -1;
 
@@ -47,13 +48,10 @@ bool Game::canCastle(Square& kingSquare, Square& rookSquare, Square board[8][8])
     }
 
     // king cannot be in check, or pass through a square under attack, or land in check
-    // we test king at kingX, kingX+dir, kingX+2*dir (2*dir is rook-side; for queenside on standard board dir=-1)
     for (int step = 0; step <= 2; ++step) {
         int testX = kingX + step * dir;
         if (testX < 0 || testX > 7) return false;
-        Square copy[8][8];
-        copyBoard(board, copy);
-        // move king in the copy from kingX to testX
+        auto copy = board;
         copy[kingY][testX].SetPiece(copy[kingY][kingX].GetPiece());
         copy[kingY][kingX].SetPiece(Piece(PieceType::None));
         if (isInCheck(color, copy)) return false;
@@ -87,8 +85,7 @@ bool Game::OnLButtonDown(CPoint point) {
         }
 
         // --- simulate move for check ---
-        Square copy[8][8];
-        copyBoard(chessboard->GetSquares(), copy);
+        auto copy = chessboard->GetSquares();
 
         Piece movingPiece = piece_in_hand->GetPiece();
         PieceColor moverColor = movingPiece.GetPieceColor();
@@ -209,7 +206,7 @@ bool Game::inBounds(int x, int y) {
     return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
-bool Game::pathClear(int fromX, int fromY, int toX, int toY, Square board[8][8]) {
+bool Game::pathClear(int fromX, int fromY, int toX, int toY, const std::vector<std::vector<Square>>& board) {
     int dx = toX - fromX;
     int dy = toY - fromY;
     int stepX = (dx == 0) ? 0 : (dx > 0 ? 1 : -1);
@@ -226,7 +223,7 @@ bool Game::pathClear(int fromX, int fromY, int toX, int toY, Square board[8][8])
     return true;
 }
 
-bool Game::isValidMove(Square& from, Square& to, Square board[8][8]) {
+bool Game::isValidMove(Square& from, Square& to, const std::vector<std::vector<Square>>& board) {
     int fromX, fromY, toX, toY;
     if (!findSquarePosition(from, board, fromX, fromY) ||
         !findSquarePosition(to, board, toX, toY))
@@ -296,21 +293,21 @@ bool Game::isValidMove(Square& from, Square& to, Square board[8][8]) {
 
 // ----------------- Position / Check / Checkmate -----------------
 
-bool Game::findSquarePosition(Square& target, Square board[8][8], int& outX, int& outY) {
+bool Game::findSquarePosition(Square& target, const std::vector<std::vector<Square>>& board, int& outX, int& outY) {
     for (int y = 0; y < 8; ++y)
         for (int x = 0; x < 8; ++x)
             if (&board[y][x] == &target) { outX = x; outY = y; return true; }
     return false;
 }
 
-bool Game::isInCheck(PieceColor kingColor, Square board[8][8]) {
+bool Game::isInCheck(PieceColor kingColor, const std::vector<std::vector<Square>>& board) {
     Square* kingSquare = nullptr;
     for (int y = 0; y < 8 && !kingSquare; ++y)
         for (int x = 0; x < 8; ++x) {
             PieceType pt = board[y][x].GetPiece().GetPieceType();
             if ((kingColor == PieceColor::White && pt == PieceType::WhiteKing) ||
                 (kingColor == PieceColor::Black && pt == PieceType::BlackKing)) {
-                kingSquare = &board[y][x]; break;
+                kingSquare = const_cast<Square*>(&board[y][x]); break;
             }
         }
     if (!kingSquare) return false;
@@ -319,13 +316,13 @@ bool Game::isInCheck(PieceColor kingColor, Square board[8][8]) {
         for (int x = 0; x < 8; ++x) {
             Piece p = board[y][x].GetPiece();
             if (p.GetPieceType() != PieceType::None && p.GetPieceColor() != kingColor)
-                if (isValidMove(board[y][x], *kingSquare, board)) 
+                if (isValidMove(const_cast<Square&>(board[y][x]), *kingSquare, board)) 
                     return true;
         }
     return false;
 }
 
-bool Game::isCheckmate(PieceColor kingColor, Square board[8][8]) {
+bool Game::isCheckmate(PieceColor kingColor, const std::vector<std::vector<Square>>& board) {
     if (!isInCheck(kingColor, board)) return false;
 
     for (int y = 0; y < 8; ++y)
@@ -335,9 +332,8 @@ bool Game::isCheckmate(PieceColor kingColor, Square board[8][8]) {
 
             for (int ty = 0; ty < 8; ++ty)
                 for (int tx = 0; tx < 8; ++tx)
-                    if (!(x == tx && y == ty) && isValidMove(board[y][x], board[ty][tx], board)) {
-                        Square copy[8][8];
-                        copyBoard(board, copy);
+                    if (!(x == tx && y == ty) && isValidMove(const_cast<Square&>(board[y][x]), const_cast<Square&>(board[ty][tx]), board)) {
+                        auto copy = board;
                         copy[ty][tx].SetPiece(copy[y][x].GetPiece());
                         copy[y][x].SetPiece(Piece(PieceType::None));
                         if (!isInCheck(kingColor, copy)) return false;
@@ -350,31 +346,34 @@ void Game::checkCheck() {
     PieceColor opponentColor = currentPlayer->GetColor();
     if (isInCheck(opponentColor, chessboard->GetSquares())) {
         if (isCheckmate(opponentColor, chessboard->GetSquares())) {
-            int result = MessageBox(NULL, L"Checkmate!", L"Game Over", MB_OK);
+            CString checkmate;
+            checkmate.LoadString(IDS_CHECKMATE);
+
+			CString gameOver;
+			gameOver.LoadString(IDS_GAMEOVER);
+
+            int result = MessageBox(parentDlg->GetSafeHwnd(), checkmate, gameOver, MB_OK);
             if (result == IDOK) {
                 parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
             }
         }
         else {
-            auto result = MessageBox(NULL, L"Check!", L"Warning", MB_OK);
+            CString check;
+            check.LoadString(IDS_CHECK);
+
+            CString warning;
+            warning.LoadString(IDS_WARNING);
+            int result = MessageBox(parentDlg->GetSafeHwnd(), check, warning, MB_OK);
         }
     }
 }
 
 // ----------------- Helpers -----------------
 
-
 void Game::PromotePawn(Square* square, PieceType newType) {
     square->SetPiece(Piece(newType));
     PieceColor opponentColor = currentPlayer->GetColor();
     checkCheck();
-}
-
-void Game::copyBoard(Square src[8][8], Square dest[8][8]) {
-    for (int y = 0; y < 8; ++y)
-        for (int x = 0; x < 8; ++x) {
-            dest[y][x] = src[y][x];
-        }
 }
 
 Square* Game::GetChessboardSquare(int row, int col)

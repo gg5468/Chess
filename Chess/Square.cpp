@@ -28,7 +28,7 @@ void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)
 {
 	FillRect(dc, &r, brush);
     SetRect(r);
-	DrawTextW(dc, piece.GetPieceSymbol(), -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	DrawText(dc, piece.GetPieceSymbol(), -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	if (selected) {
 		drawSelected(dc, r ,hPen);

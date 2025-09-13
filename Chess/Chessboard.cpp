@@ -4,166 +4,157 @@
 #include "Piece.h"
 #include <iostream>
 #include "fen.h"
-#include<string>
+#include <string>
+#include <vector>
 
 Chessboard::Chessboard()
+    : squares(8, std::vector<Square>(8)), pieces(8, std::vector<Piece>(8))
 {
-	SetPieces();
+    SetPieces();
 }
 
 Chessboard::~Chessboard()
 {
 }
 
-void Chessboard::DrawBoard(HDC dc, RECT client_rect)
+void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
 {
+    SetBkMode(dc, TRANSPARENT);
 
-	SetBkMode(dc, TRANSPARENT);
+    int dimensions = 8;
 
-	int dimensions = 8;
+    int height = client_rect.bottom / dimensions;
+    int width = client_rect.right / dimensions;
 
-	int height = client_rect.bottom / dimensions;
-	int width = client_rect.right / dimensions;
+    int boardWidth = client_rect.right - client_rect.left;
+    int boardHeight = client_rect.bottom - client_rect.top;
 
-	int boardWidth = client_rect.right - client_rect.left;
-	int boardHeight = client_rect.bottom - client_rect.top;
+    int squareWidth = boardWidth / dimensions;
+    int squareHeight = boardHeight / dimensions;
 
-	int squareWidth = boardWidth / dimensions;
-	int squareHeight = boardHeight / dimensions;
+    auto white = RGB(205, 170, 125);
+    auto black = RGB(101, 67, 33);
 
+    HBRUSH white_brush = CreateSolidBrush(white);
+    HBRUSH black_brush = CreateSolidBrush(black);
 
-	auto white = RGB(205, 170, 125);
+    HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(556,896,4));
 
+    int fontPointSize = (height + width) / 6;
+    int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
+    CFont m_dynamicFont;
+    m_dynamicFont.CreateFont(
+        logicalHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+        L"Segoe UI Symbol"
+    );
 
-	auto black = RGB(101, 67, 33);
+    auto old_font = SelectObject(dc, m_dynamicFont);
 
-	HBRUSH white_brush = CreateSolidBrush(white);
-	HBRUSH black_brush = CreateSolidBrush(black);
+    for (int i = 0; i < dimensions; ++i) {
+        for (int j = 0; j < dimensions; ++j) {
+            RECT r = {
+                client_rect.left + j * squareWidth,
+                client_rect.top + i * squareHeight,
+                client_rect.left + (j + 1) * squareWidth,
+                client_rect.top + (i + 1) * squareHeight
+            };
 
-	HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(556,896,4));
+            Square* sq = &squares[i][j];
 
-	int fontPointSize = (height + width) / 6;
-	int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
-	CFont m_dynamicFont;
-	m_dynamicFont.CreateFont(
-		logicalHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-		DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		L"Segoe UI Symbol"
-	);
+            if (sq->GetPiece().GetPieceType() == PieceType::Uninitialized) {
+                sq->SetPiece(pieces[i][j]);
+            }
 
-	auto old_font = SelectObject(dc, m_dynamicFont);
+            if ((j + i) % 2 == 0) {
+                sq->DrawSquare(dc, r, white_brush, selected_pen);
+            }
+            else {
+                sq->DrawSquare(dc, r, black_brush, selected_pen);
+            }
+        }
+    }
 
-	for (int i = 0; i < dimensions; ++i) {
-		for (int j = 0; j < dimensions; ++j) {
-			RECT r = {
-				client_rect.left + j * squareWidth,
-				client_rect.top + i * squareHeight,
-				client_rect.left + (j + 1) * squareWidth,
-				client_rect.top + (i + 1) * squareHeight
-			};
+    SelectObject(dc, old_font);
 
-			Square* sq = &squares[i][j];
+    DeleteObject(white_brush);
+    DeleteObject(black_brush);
 
-			if (sq -> GetPiece().GetPieceType() == PieceType::Uninitialized) {
-				sq->SetPiece(pieces[i][j]);
-			}
-			
-
-			if ((j + i) % 2 == 0) {
-				sq -> DrawSquare(dc, r, white_brush, selected_pen);
-			}
-			else {
-				sq -> DrawSquare(dc, r, black_brush, selected_pen);
-			}
-		}
-	}
-
-	SelectObject(dc, old_font);
-
-	DeleteObject(white_brush);
-	DeleteObject(black_brush);
-
-	DeleteObject(selected_pen);
+    DeleteObject(selected_pen);
 }
-
 
 void Chessboard::SetPieces()
 {
-	auto p = fen::GetPieces(fen_notation);
+    auto p = fen::GetPieces(fen_notation);
 
-	int skip = 0;
-	int i = 0;
-	int j = 0;
+    int skip = 0;
+    int i = 0;
+    int j = 0;
 
-	int c = 0;
+    int c = 0;
 
-	while (c < p.length() + 1) {
-		if (skip > 0) {
-			pieces[i][j] = Piece(PieceType::None);
-			skip--;
-			j++;
+    while (c < p.length() + 1) {
+        if (skip > 0) {
+            pieces[i][j] = Piece(PieceType::None);
+            skip--;
+            j++;
 
-			continue;
-		}
-		if (std::isdigit(p[c])) {
-			skip = p[c] - '0';
+            continue;
+        }
+        if (std::isdigit(p[c])) {
+            skip = p[c] - '0';
 
-			c++;
-			continue;
-		}
-		if (p[c] == '/') {
-			i++;
-			j = 0;
-			c++;
-			continue;
-		}
+            c++;
+            continue;
+        }
+        if (p[c] == '/') {
+            i++;
+            j = 0;
+            c++;
+            continue;
+        }
 
-		switch (p[c]) {
-			case 'r': pieces[i][j] = Piece(PieceType::BlackRook); break;
-			case 'n': pieces[i][j] = Piece(PieceType::BlackKnight); break;
-			case 'b': pieces[i][j] = Piece(PieceType::BlackBishop); break;
-			case 'q': pieces[i][j] = Piece(PieceType::BlackQueen); break;
-			case 'k': pieces[i][j] = Piece(PieceType::BlackKing); break;
-			case 'p': pieces[i][j] = Piece(PieceType::BlackPawn); break;
-			case 'R': pieces[i][j] = Piece(PieceType::WhiteRook); break;
-			case 'N': pieces[i][j] = Piece(PieceType::WhiteKnight);; break;
-			case 'B': pieces[i][j] = Piece(PieceType::WhiteBishop); break;
-			case 'Q': pieces[i][j] = Piece(PieceType::WhiteQueen); break;
-			case 'K': pieces[i][j] = Piece(PieceType::WhiteKing); break;
-			case 'P': pieces[i][j] = Piece(PieceType::WhitePawn); break;
-		}
-		
-		c++;
-		j++;
+        switch (p[c]) {
+            case 'r': pieces[i][j] = Piece(PieceType::BlackRook); break;
+            case 'n': pieces[i][j] = Piece(PieceType::BlackKnight); break;
+            case 'b': pieces[i][j] = Piece(PieceType::BlackBishop); break;
+            case 'q': pieces[i][j] = Piece(PieceType::BlackQueen); break;
+            case 'k': pieces[i][j] = Piece(PieceType::BlackKing); break;
+            case 'p': pieces[i][j] = Piece(PieceType::BlackPawn); break;
+            case 'R': pieces[i][j] = Piece(PieceType::WhiteRook); break;
+            case 'N': pieces[i][j] = Piece(PieceType::WhiteKnight); break;
+            case 'B': pieces[i][j] = Piece(PieceType::WhiteBishop); break;
+            case 'Q': pieces[i][j] = Piece(PieceType::WhiteQueen); break;
+            case 'K': pieces[i][j] = Piece(PieceType::WhiteKing); break;
+            case 'P': pieces[i][j] = Piece(PieceType::WhitePawn); break;
+        }
 
-	}
-
+        c++;
+        j++;
+    }
 }
 
 Square* Chessboard::GetSquare(int row, int col) {
-	if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-		throw std::out_of_range("GetSquare: indices out of range");
-	}
-	return &squares[row][col];
+    if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+        throw std::out_of_range("GetSquare: indices out of range");
+    }
+    return &squares[row][col];
 }
 
-
-Square* Chessboard::OnLButtonDown(CPoint point) {
-	return FindSquareWithPoint(point);
+Square* Chessboard::OnLButtonDown(const CPoint& point) {
+    return FindSquareWithPoint(point);
 }
 
-Square* Chessboard::FindSquareWithPoint(CPoint point) {
-	for (int row = 0; row < 8; ++row) {
-		for (int col = 0; col < 8; ++col) {
-			Square* sq = &squares[row][col];
+Square* Chessboard::FindSquareWithPoint(const CPoint& point) {
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            Square* sq = &squares[row][col];
 
-			if (PtInRect(&sq->GetRect(), point)) {
-				return sq;
-			}
-
-		}
-	}
-
-	return nullptr;
+            if (PtInRect(&sq->GetRect(), point)) {
+                return sq;
+            }
+        }
+    }
+    return nullptr;
 }

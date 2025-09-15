@@ -7,6 +7,7 @@ class Player
 public:
 	Player(PieceColor color);
 	PieceColor GetColor();
+	bool operator==(const Player& other) const;
 private:
 	PieceColor color;
 };

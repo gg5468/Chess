@@ -26,7 +26,7 @@ public:
 	void PromotePawn(int x, int y);
 protected:
 	HICON m_hIcon;
-	Game game = Game(this);
+	Game game;
 	void DrawGame();
 
 

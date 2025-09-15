@@ -8,18 +8,13 @@ public:
         return std::wstring(str.begin(), str.end());
     }
 
-
-    static std::wstring fen::GetPieces(std::string fen) {
-        std::regex pattern(R"(([\w\d/]+)\s([wb])\s([KQkq\-]+)\s([\w\d\-]+)\s(\d+)\s(\d+))");
-
-        std::smatch matches;
-
-        if (std::regex_match(fen, matches, pattern)) {
-            return to_wstring(matches[1].str());
+    static std::wstring GetPieces(const std::string& fen_str) {
+        std::wstring wfen = to_wstring(fen_str);
+        std::wregex pattern(L"([\\w\\d/]+)\\s([wb])\\s([KQkq\\-]+)\\s([\\w\\d\\-]+)\\s(\\d+)\\s(\\d+)");
+        std::wsmatch matches;
+        if (std::regex_match(wfen, matches, pattern)) {
+            return matches[1].str();
         }
-        else {
-			throw std::invalid_argument("Invalid FEN string");
-        }
-
+        return L"";
     }
 };

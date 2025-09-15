@@ -8,7 +8,8 @@
 
 
 CChessDlg::CChessDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_CHESS_DIALOG, pParent)
+	: CDialogEx(IDD_CHESS_DIALOG, pParent),
+	game(*this)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -37,9 +38,12 @@ void CChessDlg::DrawGame()
 
 void CChessDlg::RedrawGame()
 {
-	game = Game(this);
-	DrawGame();
-	return;
+	CRect client_rect;
+	GetClientRect(&client_rect);
+	CPaintDC dc(this);
+
+	game.Redraw(dc, client_rect);
+	Invalidate();
 }
 
 void CChessDlg::PromotePawn(int x, int y)
@@ -105,7 +109,13 @@ void CChessDlg::OnSize(UINT nType, int cx, int cy)
 
 void CChessDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	game.OnLButtonDown(point);
+	try {
+		game.OnLButtonDown(point);
+	}
+	catch (const std::exception& e) {
+		AfxMessageBox((CString)e.what(), MB_ICONERROR);
+		return;
+	}
 	Invalidate();
 }
 

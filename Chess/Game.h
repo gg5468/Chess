@@ -13,8 +13,10 @@ public:
     Game(Game&&) noexcept = default;
     Game& operator=(Game&&) noexcept = default;
     
-    Game(CChessDlg* parent);
+    Game(CChessDlg& parent) : parentDlg(parent) {};
     void Draw(HDC dc, RECT client_rect);
+
+    void Redraw(HDC dc, RECT client_rect);
     
     bool OnLButtonDown(CPoint p);
 
@@ -31,14 +33,14 @@ private:
     bool isCheckmate(PieceColor kingColor, const std::vector<std::vector<Square>>& board);
     bool canCastle(const Square& kingSquare, const Square& rookSquare, const std::vector<std::vector<Square>>& board);
 
-    CChessDlg* parentDlg = nullptr;
+    CChessDlg& parentDlg;
 
     std::unique_ptr<Chessboard> chessboard = std::make_unique<Chessboard>();
     Square* selected_square = nullptr;
     
-    std::unique_ptr<Player> white = std::make_unique<Player>(PieceColor::White);
-    std::unique_ptr<Player> black = std::make_unique<Player>(PieceColor::Black);
-    Player* currentPlayer = white.get();
+    Player white = Player(PieceColor::White);
+    Player black = Player(PieceColor::Black);
+    Player currentPlayer = white;
 
     int lastPawnDoubleStepX = -1; 
     int lastPawnDoubleStepY = -1; 

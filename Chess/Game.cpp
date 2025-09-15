@@ -10,16 +10,18 @@
 
 // ----------------- Game -----------------
 
-Game::Game(CChessDlg* parent) {
-    parentDlg = parent;
-}
 
 void Game::Draw(HDC dc, RECT client_rect) {
     chessboard->DrawBoard(dc, client_rect);
 }
 
+void Game::Redraw(HDC dc, RECT client_rect) {
+	chessboard = std::make_unique<Chessboard>();
+	Draw(dc, client_rect);
+}
+
 void Game::switchTurn() {
-    currentPlayer = (currentPlayer == white.get()) ? black.get() : white.get();
+    currentPlayer = (currentPlayer == white ? black : white);
 }
 
 // ----------------- Castling Helper -----------------
@@ -162,7 +164,7 @@ bool Game::OnLButtonDown(CPoint point) {
         if (movingPiece.IsPawn()) {
             if ((moverColor == PieceColor::White && toY == 0) ||
                 (moverColor == PieceColor::Black && toY == 7)) {
-                parentDlg->PromotePawn(toY, toX);
+                parentDlg.PromotePawn(toY, toX);
             }
         }
 
@@ -188,7 +190,7 @@ bool Game::OnLButtonDown(CPoint point) {
     else {
         // pick up piece
         if (selected_square->GetPiece().GetPieceType() == PieceType::None) return false;
-        if (selected_square->GetPiece().GetPieceColor() == currentPlayer->GetColor()) {
+        if (selected_square->GetPiece().GetPieceColor() == currentPlayer.GetColor()) {
             piece_in_hand = selected_square;
             selected_square->SetSelected(true);
             return true;
@@ -341,17 +343,17 @@ bool Game::isCheckmate(PieceColor kingColor, const std::vector<std::vector<Squar
 }
 
 void Game::checkCheck() {
-    PieceColor opponentColor = currentPlayer->GetColor();
+    PieceColor opponentColor = currentPlayer.GetColor();
     if (isInCheck(opponentColor, chessboard->GetSquares())) {
         if (isCheckmate(opponentColor, chessboard->GetSquares())) {
-            int result = MessageBox(parentDlg->GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECKMATE)), CString(MAKEINTRESOURCE(IDS_GAMEOVER)), MB_OK);
+            int result = MessageBox(parentDlg.GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECKMATE)), CString(MAKEINTRESOURCE(IDS_GAMEOVER)), MB_OK);
             if (result == IDOK) {
-                parentDlg->RedrawGame();
+                parentDlg.RedrawGame();
                 return;
             }
         }
         else {
-            int result = MessageBox(parentDlg->GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECK)), CString(MAKEINTRESOURCE(IDS_WARNING)), MB_OK);
+            int result = MessageBox(parentDlg.GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECK)), CString(MAKEINTRESOURCE(IDS_WARNING)), MB_OK);
             return;
         }
     }
@@ -361,7 +363,7 @@ void Game::checkCheck() {
 
 void Game::PromotePawn(Square* square, PieceType newType) {
     square->SetPiece(Piece(newType));
-    PieceColor opponentColor = currentPlayer->GetColor();
+    PieceColor opponentColor = currentPlayer.GetColor();
     checkCheck();
 }
 

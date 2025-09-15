@@ -3,11 +3,6 @@
 #include "Piece.h"
 #include <stdexcept>
 
-Square::Square(Piece* p)
-{
-    piece = SetPiece(*p);
-}
-
 Square& Square::operator=(const Square& other)
 {
     if (this == &other)

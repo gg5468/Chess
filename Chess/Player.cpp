@@ -11,3 +11,7 @@ PieceColor Player::GetColor()
 {
 	return color;
 }
+
+bool Player::operator==(const Player& other) const {
+	return this->color == other.color;
+}

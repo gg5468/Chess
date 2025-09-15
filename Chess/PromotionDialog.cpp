@@ -12,10 +12,6 @@ PromotionDialog::PromotionDialog(CWnd* pParent /*=nullptr*/)
 {
 }
 
-PromotionDialog::~PromotionDialog()
-{
-}
-
 BOOL PromotionDialog::OnInitDialog()
 {
     CDialogEx::OnInitDialog();

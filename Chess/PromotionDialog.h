@@ -7,7 +7,6 @@ class PromotionDialog : public CDialogEx
 
 public:
     PromotionDialog(CWnd* pParent = nullptr);   // standard constructor
-    virtual ~PromotionDialog();
 
     int choice;          // final user selection 0..3
 

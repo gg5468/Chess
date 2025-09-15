@@ -52,12 +52,12 @@ void CChessDlg::PromotePawn(int x, int y)
 	PieceType oldType = sq->GetPiece().GetPieceType();
 	PieceColor color = (oldType <= PieceType::WhiteKing) ? PieceColor::White : PieceColor::Black;
 
-	std::unique_ptr<PromotionDialog> dlg = std::make_unique<PromotionDialog>(this);
+	PromotionDialog dlg(this);
 
-	if (dlg->DoModal() == IDOK)
+	if (dlg.DoModal() == IDOK)
 	{
 		PieceType newType;
-		switch (dlg->choice)
+		switch (dlg.choice)
 		{
 		case 0: newType = (color == PieceColor::White) ? PieceType::WhiteQueen : PieceType::BlackQueen; break;
 		case 1: newType = (color == PieceColor::White) ? PieceType::WhiteRook : PieceType::BlackRook; break;

@@ -14,8 +14,6 @@ Game::Game(CChessDlg* parent) {
     parentDlg = parent;
 }
 
-Game::~Game() {}
-
 void Game::Draw(HDC dc, RECT client_rect) {
     chessboard->DrawBoard(dc, client_rect);
 }
@@ -164,7 +162,7 @@ bool Game::OnLButtonDown(CPoint point) {
         if (movingPiece.IsPawn()) {
             if ((moverColor == PieceColor::White && toY == 0) ||
                 (moverColor == PieceColor::Black && toY == 7)) {
-                parentDlg->PostMessage(WM_USER_PROMOTE_PAWN, (WPARAM)toY, (LPARAM)toX);
+                parentDlg->PromotePawn(toY, toX);
             }
         }
 
@@ -348,7 +346,7 @@ void Game::checkCheck() {
         if (isCheckmate(opponentColor, chessboard->GetSquares())) {
             int result = MessageBox(parentDlg->GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECKMATE)), CString(MAKEINTRESOURCE(IDS_GAMEOVER)), MB_OK);
             if (result == IDOK) {
-                parentDlg->PostMessage(WM_USER_REDRAW_GAME, (WPARAM)0, (LPARAM)0);
+                parentDlg->RedrawGame();
                 return;
             }
         }

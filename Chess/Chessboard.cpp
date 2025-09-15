@@ -13,10 +13,6 @@ Chessboard::Chessboard()
     SetPieces();
 }
 
-Chessboard::~Chessboard()
-{
-}
-
 void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
 {
     SetBkMode(dc, TRANSPARENT);
@@ -38,7 +34,7 @@ void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
     HBRUSH white_brush = CreateSolidBrush(white);
     HBRUSH black_brush = CreateSolidBrush(black);
 
-    HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(556,896,4));
+    HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(0,200,4));
 
     int fontPointSize = (height + width) / 6;
     int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);

@@ -12,7 +12,7 @@ public:
 	Square& operator=(const Square& other);
 
 	Square(Piece* p);
-	Square();
+	Square() {};
 	
 	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }

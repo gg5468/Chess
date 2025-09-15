@@ -8,10 +8,6 @@ Square::Square(Piece* p)
     piece = SetPiece(*p);
 }
 
-Square::Square()
-{
-}
-
 Square& Square::operator=(const Square& other)
 {
     if (this == &other)
@@ -36,22 +32,11 @@ void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)
 }
 
 void Square::drawSelected(HDC dc, RECT r, HPEN hPen) {
-    HPEN    hOldPen = (HPEN)SelectObject(dc, hPen);
+    HPEN hOldPen = (HPEN)SelectObject(dc, hPen);
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(dc, GetStockObject(NULL_BRUSH));
 
-    MoveToEx(dc, r.left, r.top, nullptr);
-    LineTo(dc, r.right - 1, r.top);
+    Rectangle(dc, r.left, r.top, r.right, r.bottom);
 
-
-    MoveToEx(dc, r.right - 1, r.top, nullptr);
-    LineTo(dc, r.right - 1, r.bottom - 1);
-
-
-    MoveToEx(dc, r.right - 1, r.bottom - 1, nullptr);
-    LineTo(dc, r.left, r.bottom - 1);
-
-
-    MoveToEx(dc, r.left, r.bottom - 1, nullptr);
-    LineTo(dc, r.left, r.top);
-
+    SelectObject(dc, hOldBrush);
     SelectObject(dc, hOldPen);
 }

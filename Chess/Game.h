@@ -14,7 +14,6 @@ public:
     Game& operator=(Game&&) noexcept = default;
     
     Game(CChessDlg* parent);
-    ~Game();
     void Draw(HDC dc, RECT client_rect);
     
     bool OnLButtonDown(CPoint p);

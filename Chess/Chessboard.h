@@ -7,7 +7,6 @@ class Chessboard
 {
 public:
     Chessboard();
-    ~Chessboard();
 
     void DrawBoard(HDC dc, const RECT& client_rect);
 

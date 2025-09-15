@@ -24,8 +24,6 @@ BEGIN_MESSAGE_MAP(CChessDlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_ERASEBKGND()
-	ON_MESSAGE(WM_USER_PROMOTE_PAWN, &CChessDlg::OnPromotePawn)
-	ON_MESSAGE(WM_USER_REDRAW_GAME, &CChessDlg::OnRedrawGame)
 END_MESSAGE_MAP()
 
 void CChessDlg::DrawGame()
@@ -37,18 +35,15 @@ void CChessDlg::DrawGame()
 	game.Draw(dc, client_rect);
 }
 
-LRESULT CChessDlg::OnRedrawGame(WPARAM wParam, LPARAM lParam)
+void CChessDlg::RedrawGame()
 {
 	game = Game(this);
 	DrawGame();
-	return 0;
+	return;
 }
 
-LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
+void CChessDlg::PromotePawn(int x, int y)
 {
-	int x = static_cast<int>(wParam); 
-	int y = static_cast<int>(lParam); 
-
 	Square* sq = game.GetChessboardSquare(x,y);
 	PieceType oldType = sq->GetPiece().GetPieceType();
 	PieceColor color = (oldType <= PieceType::WhiteKing) ? PieceColor::White : PieceColor::Black;
@@ -71,8 +66,6 @@ LRESULT CChessDlg::OnPromotePawn(WPARAM wParam, LPARAM lParam)
 		
 		Invalidate(); 
 	}
-
-	return 0;
 }
 
 

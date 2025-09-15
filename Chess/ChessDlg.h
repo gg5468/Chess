@@ -20,13 +20,16 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
-
 // Implementation
+public:
+	void RedrawGame();
+	void PromotePawn(int x, int y);
 protected:
 	HICON m_hIcon;
 	Game game = Game(this);
 	void DrawGame();
-	afx_msg LRESULT OnRedrawGame(WPARAM wParam, LPARAM lParam);
+
+
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -34,7 +37,6 @@ protected:
 	BOOL OnEraseBkgnd(CDC* pDC);
 	void OnSize(UINT nType, int cx, int cy);
 	void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg LRESULT OnPromotePawn(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP();

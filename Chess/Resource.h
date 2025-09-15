@@ -32,9 +32,6 @@
 #define IDD_CHESS_DIALOG				102
 #define IDD_PROMOTION_DIALOG			2000
 
-#define WM_USER_PROMOTE_PAWN (WM_USER + 1)
-#define WM_USER_REDRAW_GAME (WM_USER + 2)
-
 #define IDS_PIECE_NONE        3000
 #define IDS_WHITE_PAWN        3001
 #define IDS_WHITE_KNIGHT      3002

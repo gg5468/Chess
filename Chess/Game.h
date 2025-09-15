@@ -35,7 +35,7 @@ private:
 
     CChessDlg& parentDlg;
 
-    std::unique_ptr<Chessboard> chessboard = std::make_unique<Chessboard>();
+    Chessboard chessboard = Chessboard();
     Square* selected_square = nullptr;
     
     Player white = Player(PieceColor::White);

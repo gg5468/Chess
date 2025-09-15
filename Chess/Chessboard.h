@@ -11,6 +11,7 @@ public:
     void DrawBoard(HDC dc, const RECT& client_rect);
 
     void SetPieces();
+    void Chessboard::Reset();
     Square* OnLButtonDown(const CPoint& point);
     Square* FindSquareWithPoint(const CPoint& point);
 

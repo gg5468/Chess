@@ -154,3 +154,9 @@ Square* Chessboard::FindSquareWithPoint(const CPoint& point) {
     }
     return nullptr;
 }
+
+void Chessboard::Reset() {
+    squares = std::vector<std::vector<Square>>(8, std::vector<Square>(8));
+    pieces = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8));
+    SetPieces();
+}

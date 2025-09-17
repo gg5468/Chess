@@ -8,7 +8,7 @@
 #include <vector>
 
 Chessboard::Chessboard()
-    : squares(8, std::vector<Square>(8)), pieces(8, std::vector<Piece>(8))
+    : squares(8, std::vector<Square>(8))
 {
     SetPieces();
 }
@@ -22,11 +22,8 @@ void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
     int height = client_rect.bottom / dimensions;
     int width = client_rect.right / dimensions;
 
-    int boardWidth = client_rect.right - client_rect.left;
-    int boardHeight = client_rect.bottom - client_rect.top;
-
-    int squareWidth = boardWidth / dimensions;
-    int squareHeight = boardHeight / dimensions;
+    int fontPointSize = (height + width) / 6;
+    int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
 
     auto white = RGB(205, 170, 125);
     auto black = RGB(101, 67, 33);
@@ -36,8 +33,6 @@ void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
 
     HPEN selected_pen = CreatePen(PS_SOLID, 3, RGB(0,200,4));
 
-    int fontPointSize = (height + width) / 6;
-    int logicalHeight = -MulDiv(fontPointSize, GetDeviceCaps(dc, LOGPIXELSY), 72);
     CFont m_dynamicFont;
     m_dynamicFont.CreateFont(
         logicalHeight, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
@@ -50,24 +45,14 @@ void Chessboard::DrawBoard(HDC dc, const RECT& client_rect)
 
     for (int i = 0; i < dimensions; ++i) {
         for (int j = 0; j < dimensions; ++j) {
-            RECT r = {
-                client_rect.left + j * squareWidth,
-                client_rect.top + i * squareHeight,
-                client_rect.left + (j + 1) * squareWidth,
-                client_rect.top + (i + 1) * squareHeight
-            };
 
             Square* sq = &squares[i][j];
 
-            if (sq->GetPiece().GetPieceType() == PieceType::Uninitialized) {
-                sq->SetPiece(pieces[i][j]);
-            }
-
             if ((j + i) % 2 == 0) {
-                sq->DrawSquare(dc, r, white_brush, selected_pen);
+                sq->DrawSquare(dc, white_brush, selected_pen);
             }
             else {
-                sq->DrawSquare(dc, r, black_brush, selected_pen);
+                sq->DrawSquare(dc, black_brush, selected_pen);
             }
         }
     }
@@ -92,7 +77,7 @@ void Chessboard::SetPieces()
 
     while (c < p.length() + 1) {
         if (skip > 0) {
-            pieces[i][j] = Piece(PieceType::None);
+            squares[i][j].SetPiece(PieceType::None);
             skip--;
             j++;
 
@@ -112,18 +97,18 @@ void Chessboard::SetPieces()
         }
 
         switch (p[c]) {
-            case 'r': pieces[i][j] = Piece(PieceType::BlackRook); break;
-            case 'n': pieces[i][j] = Piece(PieceType::BlackKnight); break;
-            case 'b': pieces[i][j] = Piece(PieceType::BlackBishop); break;
-            case 'q': pieces[i][j] = Piece(PieceType::BlackQueen); break;
-            case 'k': pieces[i][j] = Piece(PieceType::BlackKing); break;
-            case 'p': pieces[i][j] = Piece(PieceType::BlackPawn); break;
-            case 'R': pieces[i][j] = Piece(PieceType::WhiteRook); break;
-            case 'N': pieces[i][j] = Piece(PieceType::WhiteKnight); break;
-            case 'B': pieces[i][j] = Piece(PieceType::WhiteBishop); break;
-            case 'Q': pieces[i][j] = Piece(PieceType::WhiteQueen); break;
-            case 'K': pieces[i][j] = Piece(PieceType::WhiteKing); break;
-            case 'P': pieces[i][j] = Piece(PieceType::WhitePawn); break;
+            case 'r': squares[i][j].SetPiece(Piece(PieceType::BlackRook)); break;
+            case 'n': squares[i][j].SetPiece(Piece(PieceType::BlackKnight)); break;
+            case 'b': squares[i][j].SetPiece(Piece(PieceType::BlackBishop)); break;
+            case 'q': squares[i][j].SetPiece(Piece(PieceType::BlackQueen)); break;
+            case 'k': squares[i][j].SetPiece(Piece(PieceType::BlackKing)); break;
+            case 'p': squares[i][j].SetPiece(Piece(PieceType::BlackPawn)); break;
+            case 'R': squares[i][j].SetPiece(Piece(PieceType::WhiteRook)); break;
+            case 'N': squares[i][j].SetPiece(Piece(PieceType::WhiteKnight)); break;
+            case 'B': squares[i][j].SetPiece(Piece(PieceType::WhiteBishop)); break;
+            case 'Q': squares[i][j].SetPiece(Piece(PieceType::WhiteQueen)); break;
+            case 'K': squares[i][j].SetPiece(Piece(PieceType::WhiteKing)); break;
+            case 'P': squares[i][j].SetPiece(Piece(PieceType::WhitePawn)); break;
         }
 
         c++;
@@ -156,7 +141,11 @@ Square* Chessboard::FindSquareWithPoint(const CPoint& point) {
 }
 
 void Chessboard::Reset() {
-    squares = std::vector<std::vector<Square>>(8, std::vector<Square>(8));
-    pieces = std::vector<std::vector<Piece>>(8, std::vector<Piece>(8));
+    for (auto& row : squares) {
+        for (auto& s : row) {
+            s.SetPiece(PieceType::None);
+        }
+    }
+
     SetPieces();
 }

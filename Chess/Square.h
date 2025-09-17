@@ -10,10 +10,8 @@ class Square
 {
 public:          
 	Square& operator=(const Square& other);
-
-	Square() {};
 	
-	void DrawSquare(HDC dc, RECT client_rect, HBRUSH brush, HPEN hPen);
+	void DrawSquare(HDC dc, HBRUSH brush, HPEN hPen);
 	void SetSelected(bool sel) { selected = sel; }
 
 	Piece GetPiece() const { return piece; };

@@ -15,14 +15,14 @@ Square& Square::operator=(const Square& other)
     return *this;
 }
 
-void Square::DrawSquare(HDC dc,RECT r, HBRUSH brush, HPEN hPen)
+void Square::DrawSquare(HDC dc, HBRUSH brush, HPEN hPen)
 {
-	FillRect(dc, &r, brush);
-    SetRect(r);
-	DrawText(dc, piece.GetPieceSymbol(), -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	FillRect(dc, &rect, brush);
+    SetRect(rect);
+	DrawText(dc, piece.GetPieceSymbol(), -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	if (selected) {
-		drawSelected(dc, r ,hPen);
+		drawSelected(dc, rect ,hPen);
 	}
 }
 

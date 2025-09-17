@@ -21,7 +21,6 @@ public:
 
 private:
     std::vector<std::vector<Square>> squares;
-    std::vector<std::vector<Piece>> pieces;
 
-    const std::string fen_notation = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const std::wstring fen_notation = L"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 };

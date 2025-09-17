@@ -35,12 +35,12 @@ private:
 
     CChessDlg& parentDlg;
 
-    Chessboard chessboard = Chessboard();
+    Chessboard chessboard;
     Square* selected_square = nullptr;
     
     Player white = Player(PieceColor::White);
     Player black = Player(PieceColor::Black);
-    Player currentPlayer = white;
+    Player* currentPlayer = &white;
 
     int lastPawnDoubleStepX = -1; 
     int lastPawnDoubleStepY = -1; 

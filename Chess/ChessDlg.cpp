@@ -80,22 +80,15 @@ BOOL CChessDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// Set the icon for this dialog.  The framework does this automatically
-	//  when the application's main window is not a dialog
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
+
+	SetIcon(m_hIcon, TRUE);			
+	SetIcon(m_hIcon, FALSE);	
 
 	ShowWindow(SW_SHOWNORMAL);
 
-	// TODO: Add extra initialization here
-	
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE; 
 }
-
-// If you add a minimize button to your dialog, you will need the code below
-//  to draw the icon.  For MFC applications using the document/view model,
-//  this is automatically done for you by the framework.
 
 BOOL CChessDlg::OnEraseBkgnd(CDC* pDC)
 {
@@ -104,6 +97,37 @@ BOOL CChessDlg::OnEraseBkgnd(CDC* pDC)
 
 void CChessDlg::OnSize(UINT nType, int cx, int cy)
 {
+	CRect rect;
+	GetClientRect(&rect);
+
+	int dimensions = 8;
+
+	int height = rect.bottom / dimensions;
+	int width = rect.right / dimensions;
+
+	int boardWidth = rect.right - rect.left;
+	int boardHeight = rect.bottom - rect.top;
+
+	int squareWidth = boardWidth / dimensions;
+	int squareHeight = boardHeight / dimensions;
+
+
+	for (int i = 0; i < dimensions; ++i) {
+		for (int j = 0; j < dimensions; ++j) {
+
+			Square* sq = game.GetChessboardSquare(i,j);
+
+			RECT r = {
+				rect.left + j * squareWidth,
+				rect.top + i * squareHeight,
+				rect.left + (j + 1) * squareWidth,
+				rect.top + (i + 1) * squareHeight
+			};
+
+			sq->SetRect(r);
+		}
+	}
+
 	Invalidate();
 }
 
@@ -146,9 +170,6 @@ void CChessDlg::OnPaint()
 }
 
 
-
-// The system calls this function to obtain the cursor to display while the user drags
-//  the minimized window.
 HCURSOR CChessDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);

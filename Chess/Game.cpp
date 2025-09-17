@@ -21,7 +21,7 @@ void Game::Redraw(HDC dc, RECT client_rect) {
 }
 
 void Game::switchTurn() {
-    currentPlayer = (currentPlayer == white ? black : white);
+    currentPlayer = (currentPlayer == &white ? &black : &white);
 }
 
 // ----------------- Castling Helper -----------------
@@ -190,7 +190,7 @@ bool Game::OnLButtonDown(CPoint point) {
     else {
         // pick up piece
         if (selected_square->GetPiece().GetPieceType() == PieceType::None) return false;
-        if (selected_square->GetPiece().GetPieceColor() == currentPlayer.GetColor()) {
+        if (selected_square->GetPiece().GetPieceColor() == currentPlayer ->GetColor()) {
             piece_in_hand = selected_square;
             selected_square->SetSelected(true);
             return true;
@@ -343,7 +343,7 @@ bool Game::isCheckmate(PieceColor kingColor, const std::vector<std::vector<Squar
 }
 
 void Game::checkCheck() {
-    PieceColor opponentColor = currentPlayer.GetColor();
+    PieceColor opponentColor = currentPlayer ->GetColor();
     if (isInCheck(opponentColor, chessboard.GetSquares())) {
         if (isCheckmate(opponentColor, chessboard.GetSquares())) {
             int result = MessageBox(parentDlg.GetSafeHwnd(), CString(MAKEINTRESOURCE(IDS_CHECKMATE)), CString(MAKEINTRESOURCE(IDS_GAMEOVER)), MB_OK);
@@ -363,7 +363,7 @@ void Game::checkCheck() {
 
 void Game::PromotePawn(Square* square, PieceType newType) {
     square->SetPiece(Piece(newType));
-    PieceColor opponentColor = currentPlayer.GetColor();
+    PieceColor opponentColor = currentPlayer->GetColor();
     checkCheck();
 }
 

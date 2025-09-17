@@ -10,9 +10,6 @@ class CChessDlg; // forward declaration
 class Game
 {
 public:
-    Game(Game&&) noexcept = default;
-    Game& operator=(Game&&) noexcept = default;
-    
     Game(CChessDlg& parent) : parentDlg(parent) {};
     void Draw(HDC dc, RECT client_rect);
 
